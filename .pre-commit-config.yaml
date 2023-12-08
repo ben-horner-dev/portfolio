@@ -1,5 +1,5 @@
 exclude: ".git|.tox|kubernetes/.*|Jenkinsfile|.sops.*|helmfile"
-default_stages: [commit, push]
+default_stages: [commit, pre-push, push]
 fail_fast: false # If pre-commit hook fails, the rest of the steps will not run. Set to false to run all hooks
 default_language_version:
     python: python
