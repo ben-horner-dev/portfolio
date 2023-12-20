@@ -1,0 +1,55 @@
+exclude: ".git|.tox|kubernetes/.*|Jenkinsfile|.sops.*|helmfile"
+default_stages: [commit, pre-push, push]
+fail_fast: false # If pre-commit hook fails, the rest of the steps will not run. Set to false to run all hooks
+default_language_version:
+    python: python
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: trailing-whitespace # trims whitespaces from the end of lines
+      - id: end-of-file-fixer # checks if all files end with a newline
+      # - id: detect-private-key
+      - id: detect-aws-credentials
+        args: [--allow-missing-credentials]  # Allow hook to pass when no credentials are detected.
+      - id: check-added-large-files
+        args: ['--maxkb=6000']
+      - id: check-toml # If pre-commit hook fails, the rest of the steps will not run
+      - id: check-merge-conflict # checks if your changes will cause a merge conflict or not
+      - id: no-commit-to-branch # prevent direct commits to these branches, only merges allowed
+        args: [--branch, staging, --branch, master, --branch, main]
+
+  # black: fixes almost all the styling errors automatically
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+        language_version: python
+        files: py
+
+  # isort: sorts your imports by type and name automatically
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
+        files: py
+
+  # flake8: evaluates your code using PEP-8 standard, pyflakes and other libraries
+  - repo: https://github.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+      - id: flake8
+        additional_dependencies: [flake8-isort]
+        files: py
+
+  # autoflake removes unused imports
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v1.7.7
+    hooks:
+    - id: autoflake
+      args:
+        - "--in-place"
+        - "--expand-star-imports"
+        - "--remove-duplicate-keys"
+        - "--remove-unused-variables"

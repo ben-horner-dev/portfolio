@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "portfolio"
+version = "0.1.0"
+description = "Portfolio repo for Ben Horner"
+authors = ["Ben Horner <info@benhorner.dev>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "^1.0.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+python_files = "test*.py"
+pythonpath = "src/backend"
+norecursedirs = []
+
+[tool.coverage.report]
+exclude_lines = []
+
+[tool.coverage.run]
+omit = [
+"*/.tests/*",
+"tests",
+"*/tests/*",
+"*/.venv/*",
+]
+disable_warnings = ['couldnt-parse', 'no-data-collected']
