@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  portfolio-frontend:
+    container_name: portfolio-frontend
+    build:
+      context: ../../src/frontend
+      dockerfile: ./docker/Dockerfile
+    image: portfolio-frontend
+    ports:
+      - "8080:80"
+    restart: always
