@@ -19,5 +19,17 @@ jobs:
         run: npm --prefix ./src/frontend install
       - name: Run build script
         run: npm --prefix ./src/frontend run build
+      - name: Install doctl
+        run: |
+          curl -L https://github.com/digitalocean/doctl/releases/download/v1.64.0/doctl-1.64.0-linux-amd64.tar.gz | tar xvz
+          sudo mv doctl /usr/local/bin
+      - name: Authenticate doctl
+        run: doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Login to DigitalOcean Container Registry
+        run: doctl registry login
       - name: Build the Docker image
         run: docker compose -f tools/docker/docker-compose.yml build
+      - name: Tag and push Docker image
+        run: |
+          docker tag portfolio-frontend:latest registry.digitalocean.com/$DOCKER_REGISTRY/portfolio-frontend:latest
+          docker push registry.digitalocean.com/$DOCKER_REGISTRY/portfolio-frontend:latest
