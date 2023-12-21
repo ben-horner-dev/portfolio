@@ -11,8 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: checkout all the submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - uses: actions/checkout@v3
-      with:
-        submodules: recursive
       - name: Build the Docker image
         run: docker compose -f tools/docker/docker-compose.yml build
