@@ -34,3 +34,16 @@ jobs:
         run: |
           docker tag portfolio-frontend:latest registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
           docker push registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
+      - name: Install ssh keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+      - name: Connect
+        run: ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+      - name: Pull the latest image
+        run: docker pull registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
+      - name: Run the new container
+        run: docker run -d --name portfolio-frontend -p 8080:80 registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
+      - name: clean up
+        run: rm -rf ~/.ssh
