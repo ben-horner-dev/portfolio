@@ -45,8 +45,6 @@ jobs:
           doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
           doctl registry login && 
           docker pull registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest && 
-          docker stop portfolio-frontend && 
-          docker rm portfolio-frontend && 
           docker run -d --name portfolio-frontend -p 8080:80 registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest'
       - name: clean up
         run: rm -rf ~/.ssh
