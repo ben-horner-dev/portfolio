@@ -9,4 +9,5 @@ services:
     image: portfolio-frontend
     ports:
       - "80:80"
+      - "443:443"
     restart: always
