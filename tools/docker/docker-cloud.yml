@@ -7,10 +7,5 @@ services:
       - 443:443
     restart: always
     volumes:
-      - ./certbot/conf/:/etc/letsencrypt/:ro
+      - /etc/letsencrypt/:/etc/letsencrypt/:ro
       - ./certbot/www/:/var/www/certbot/:ro
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
