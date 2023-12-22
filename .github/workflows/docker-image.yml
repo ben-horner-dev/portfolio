@@ -49,6 +49,6 @@ jobs:
           doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
           doctl registry login &&
           docker compose -f docker-cloud.yml up -d --force-recreate
-          docker system prune -a -f
+          docker system prune -a -f'
       - name: clean up
         run: rm -rf ~/.ssh
