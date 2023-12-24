@@ -2,17 +2,55 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
+    environment: prod
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker compose -f tools/docker/docker-compose.yml build
+      - name: checkout all the submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Run npm install
+        run: npm --prefix ./src/frontend install
+      - name: Run build script
+        run: npm --prefix ./src/frontend run build
+      - name: Install doctl
+        run: |
+          curl -L https://github.com/digitalocean/doctl/releases/download/v1.64.0/doctl-1.64.0-linux-amd64.tar.gz | tar xvz
+          sudo mv doctl /usr/local/bin
+      - name: Authenticate doctl
+        run: doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Login to DigitalOcean Container Registry
+        run: doctl registry login
+      - name: Build the Docker image
+        run: docker compose -f tools/docker/docker-compose.ci-build.yml build
+      - name: Tag and push Docker image
+        run: |
+          docker tag portfolio-frontend:latest registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
+          docker push registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
+      - name: Install ssh keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+      - name: Upload file to server
+        run: |
+          scp -i ~/.ssh/id_ed25519 ${{ github.workspace }}/tools/docker/docker-cloud.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/
+      - name: Connect, pull & run the latest image
+        run: |
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          export DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY }} &&
+          doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
+          doctl registry login &&
+          sudo docker compose -f docker-cloud.yml up -d --force-recreate
+          sudo docker system prune -a -f'
+      - name: clean up
+        run: rm -rf ~/.ssh
