@@ -1,7 +1,7 @@
 
 [submodule "src/backend"]
 	path = src/backend
-	url = git@github-ben-horner-dev:ben-horner-dev/portfolio-be.git
+	url = git@github.com:ben-horner-dev/portfolio-be.git
 [submodule "src/frontend"]
 	path = src/frontend
-	url = git@github:ben-horner-dev/portfolio-fe.git
+	url = git@github.com:ben-horner-dev/portfolio-fe.git
