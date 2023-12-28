@@ -16,4 +16,4 @@ jobs:
       - name: run fe tests
         run: cd src/frontend && npm run test
       - name: run be tests
-        run: cd ../../ make tests
+        run: cd ../../ && make tests
