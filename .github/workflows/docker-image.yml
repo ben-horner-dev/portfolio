@@ -45,8 +45,8 @@ jobs:
       - name: Connect, pull & run the latest image
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-          sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
-          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras -y
+          curl -fsSL https://get.docker.com -o get-docker.sh 
           sudo sh get-docker.sh
           echo 'DOCKER_REGISTRY="${{ vars.DOCKER_REGISTRY }}"' | sudo tee -a /etc/environment &&
           sudo doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
