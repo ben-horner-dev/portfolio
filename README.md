@@ -1,3 +1,1 @@
 # Portfolio
-
-### Getting Started
