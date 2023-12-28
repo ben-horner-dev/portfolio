@@ -1,0 +1,25 @@
+name: Docker Image CI
+on:
+  push:
+    branches:
+      - "test/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout all the submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Run npm install
+        run: npm --prefix ./src/frontend install
+      - name: Run build script
+        run: npm --prefix ./src/frontend run build
+      - name: Build the Docker image
+        run: docker compose -f tools/docker/docker-compose.ci-build.yml up
+      - name: run tests
+        run: docker exec -it frontend npm run test
+      - name: clean up
+        run: rm -rf ~/.ssh
