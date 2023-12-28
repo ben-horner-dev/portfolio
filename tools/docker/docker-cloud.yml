@@ -8,3 +8,8 @@ services:
     restart: always
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt/:ro
+  portfolio-backend:
+    image: registry.digitalocean.com/${DOCKER_REGISTRY}/portfolio-backend:latest
+    ports:
+      - 8000:8000
+    restart: always

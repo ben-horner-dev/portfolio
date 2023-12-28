@@ -33,6 +33,8 @@ jobs:
         run: |
           docker tag portfolio-frontend:latest registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
           docker push registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
+          docker tag portfolio-backend:latest registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-backend:latest
+          docker push registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-backend:latest
       - name: Install ssh keys
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_ed25519
