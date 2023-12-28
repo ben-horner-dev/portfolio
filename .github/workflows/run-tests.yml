@@ -14,6 +14,6 @@ jobs:
         with:
           submodules: recursive
       - name: install deps
-        run: curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash && pyenv install 3.12.0 && pip install poetry && poetry install && poetry shell
+        run: curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash && && export PATH="$HOME/.pyenv/bin:$PATH" && eval "$(pyenv init --path)" && source ~/.bashrc && pyenv install 3.12.0 && pip install poetry && poetry install && poetry shell
       - name: run tests
         run: make tests
