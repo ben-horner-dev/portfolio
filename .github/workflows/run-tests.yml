@@ -16,6 +16,6 @@ jobs:
       - name: upgrade python
         run: sudo add-apt-repository ppa:deadsnakes/ppa -y && sudo apt update -y && sudo apt install python3.12 -y
       - name: install deps
-        run: pip install poetry && poetry install && poetry shell
+        run: pip install poetry && poetry install --no-root
       - name: run tests
         run: make tests
