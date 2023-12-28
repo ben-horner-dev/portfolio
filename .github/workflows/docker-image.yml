@@ -47,9 +47,9 @@ jobs:
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
           curl -fsSL https://get.docker.com -o get-docker.sh
           sudo sh get-docker.sh
-          sudo export DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY }} &&
-          sudo doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
-          sudo doctl registry login &&
+          echo 'DOCKER_REGISTRY="${{ vars.DOCKER_REGISTRY }}"' | sudo tee -a /etc/environment &&
+          doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
+          doctl registry login &&
           sudo docker compose -f docker-cloud.yml up -d --force-recreate
           sudo docker system prune -a -f'
       - name: clean up
