@@ -20,6 +20,6 @@ jobs:
       - name: Build the Docker image
         run: docker compose -f tools/docker/docker-compose.ci-build.yml up
       - name: run tests
-        run: docker exec -it portfolio-frontend npm run test
+        run: docker exec portfolio-frontend npm run test
       - name: clean up
         run: rm -rf ~/.ssh
