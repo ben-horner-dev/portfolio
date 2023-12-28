@@ -45,11 +45,12 @@ jobs:
       - name: Connect, pull & run the latest image
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras -y
+          curl -fsSL https://get.docker.com -o get-docker.sh 
           sudo sh get-docker.sh
-          export DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY }} &&
-          doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
-          doctl registry login &&
+          echo 'DOCKER_REGISTRY="${{ vars.DOCKER_REGISTRY }}"' | sudo tee -a /etc/environment &&
+          sudo doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} && 
+          sudo doctl registry login &&
           sudo docker compose -f docker-cloud.yml up -d --force-recreate
           sudo docker system prune -a -f'
       - name: clean up
