@@ -38,7 +38,7 @@ echo 'user setup'
 echo 'installing certbot'
 echo "dns_digitalocean_token = $DIGITAL_OCEAN_TOKEN" >> ~/certbot-creds.ini
 apt install python3-certbot-dns-digitalocean -y
-certbot certonly   --dns-digitalocean   --dns-digitalocean-credentials ~/certbot-creds.ini   -d $DOMAIN_NAME --agree-tos -n --expand -v -m $EMAIL
+certbot certonly   --dns-digitalocean   --dns-digitalocean-credentials ~/certbot-creds.ini   -d $DOMAIN_NAME -d *.$DOMAIN_NAME --agree-tos -n --expand -v -m $EMAIL
 echo 'certbot installed'
 
 # Setup ssh
