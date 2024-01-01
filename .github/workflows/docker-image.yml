@@ -31,9 +31,9 @@ jobs:
         run: docker compose -f tools/docker/docker-compose.ci-build.yml build
       - name: Tag and push Docker image
         run: |
-          docker tag portfolio-frontend:latest registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
+          docker tag portfolio-frontend registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
           docker push registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-frontend:latest
-          docker tag portfolio-backend:latest registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-backend:latest
+          docker tag portfolio-backend registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-backend:latest
           docker push registry.digitalocean.com/${{ vars.DOCKER_REGISTRY }}/portfolio-backend:latest
       - name: Install ssh keys
         run: |
