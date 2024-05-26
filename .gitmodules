@@ -2,6 +2,3 @@
 [submodule "src/backend"]
 	path = src/backend
 	url = git@github.com:ben-horner-dev/portfolio-be.git
-[submodule "src/frontend"]
-	path = src/frontend
-	url = git@github.com:ben-horner-dev/portfolio-fe.git
