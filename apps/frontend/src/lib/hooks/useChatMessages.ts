@@ -4,14 +4,15 @@ import {
 	checkDailyTokenCount,
 	updateTokenCount,
 } from "@/lib/explore/agent/tokenCount";
+import { InterlocutorType } from "@/lib/explore/constants";
 import { AgentGraphError } from "@/lib/explore/errors";
 import type {
 	AgentResponse,
 	AgentServerAction,
 	ChatMessage,
 } from "@/lib/explore/types";
+import { getLogger } from "@/lib/logger";
 import { useChatStore } from "@/lib/stores/chatStore";
-import { InterlocutorType } from "../explore/constants";
 export const useChatMessages = (
 	action: AgentServerAction,
 	messagesContainerRef?: React.RefObject<HTMLDivElement | null>,
@@ -27,6 +28,7 @@ export const useChatMessages = (
 
 	const sendMessage = useCallback(
 		async (message: string) => {
+			const logger = getLogger();
 			setIsTyping(true);
 			if (!message.trim()) {
 				throw new Error("Message input value is required");
@@ -103,7 +105,12 @@ export const useChatMessages = (
 				setIsTyping(false);
 				await updateTokenCount(user, tokens);
 			} catch (error) {
+				logger.error(error);
 				setIsTyping(false);
+				updateMessage(newMessage.id, {
+					...newMessage,
+					content: "Oops, something went wrong. Please try again.",
+				});
 				if ((error as Error)?.name.includes("UserFacingErrors")) {
 					newMessage.content = (error as Error).message;
 					updateMessage(newMessage.id, {
