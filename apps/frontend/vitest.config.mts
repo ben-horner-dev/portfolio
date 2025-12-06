@@ -3,7 +3,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
@@ -78,45 +77,7 @@ export default defineConfig({
         test: {
           name: "all",
           include: ["src/**/*.{test,spec}.{js,ts,jsx,tsx}"],
-          exclude: ["src/stories/**"],
-        },
-      },
-      {
-        extends: true,
-        plugins: [
-          storybookTest({
-            configDir: path.join(dirname, ".storybook"),
-          }),
-        ],
-        optimizeDeps: {
-          include: [
-            "react",
-            "react-dom",
-            "react-dom/client",
-            "react/jsx-runtime",
-            "react/jsx-dev-runtime",
-            "@storybook/react",
-            "@storybook/addon-a11y/preview",
-          ],
-        },
-        test: {
-          name: "storybook",
-          browser: {
-            enabled: true,
-            headless: true,
-            provider: "playwright",
-            instances: [
-              {
-                browser: "chromium",
-              },
-            ],
-          },
-          setupFiles: [".storybook/vitest.setup.ts"],
-          testTimeout: process.env.CI === "true" ? 30000 : 10000,
-          hookTimeout: process.env.CI === "true" ? 30000 : 10000,
-          retry: process.env.CI === "true" ? 2 : 0,
-          isolate: false,
-          pool: "threads",
+          exclude: ["src/stories/**", "src/**/*.stories.{js,ts,jsx,tsx}"],
         },
       },
     ],

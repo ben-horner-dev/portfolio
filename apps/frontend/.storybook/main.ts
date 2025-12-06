@@ -33,9 +33,6 @@ const config: StorybookConfig = {
       include: [
         "react",
         "react-dom",
-        "react-dom/client",
-        "react/jsx-runtime",
-        "react/jsx-dev-runtime",
         "axe-core",
         "@radix-ui/react-accordion",
         "@storybook/addon-a11y/preview",
@@ -59,7 +56,6 @@ const config: StorybookConfig = {
         ...config.resolve?.alias,
         "next/image": path.resolve(__dirname, "./mock-image.tsx"),
         "next/link": path.resolve(__dirname, "./mock-link.tsx"),
-        "react-18": "react",
       },
       dedupe: ["react", "react-dom"],
     };
