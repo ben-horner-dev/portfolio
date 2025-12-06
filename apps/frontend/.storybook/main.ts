@@ -26,7 +26,16 @@ const config: StorybookConfig = {
 
     config.optimizeDeps = {
       ...config.optimizeDeps,
-      include: ["react", "react-dom", "axe-core"],
+      include: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "axe-core",
+        "@radix-ui/react-accordion",
+        "@storybook/addon-a11y/preview",
+        "@storybook/react",
+      ],
       force: process.env.CI === "true",
     };
 

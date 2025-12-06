@@ -18,6 +18,12 @@ export default defineConfig({
   optimizeDeps: {
     include: ["@testing-library/jest-dom/matchers"],
   },
+  server: {
+    fs: {
+      strict: false,
+      allow: [dirname, path.join(dirname, "node_modules")],
+    },
+  },
   test: {
     globals: true,
     exclude: ["tests/**", "node_modules/**", ".next/**"],
@@ -97,6 +103,7 @@ export default defineConfig({
           setupFiles: [".storybook/vitest.setup.ts"],
           testTimeout: process.env.CI === "true" ? 30000 : 10000,
           hookTimeout: process.env.CI === "true" ? 30000 : 10000,
+          retry: process.env.CI === "true" ? 2 : 0,
         },
       },
     ],
