@@ -15,7 +15,11 @@ const dirname =
 
 export default defineConfig({
 	plugins: [tsconfigPaths(), react()],
+	optimizeDeps: {
+		include: ["@testing-library/jest-dom/matchers"],
+	},
 	test: {
+		globals: true,
 		exclude: ["tests/**", "node_modules/**", ".next/**"],
 		environment: "jsdom",
 		setupFiles: ["./src/test/setup.ts"],
@@ -45,6 +49,12 @@ export default defineConfig({
 				"src/lib/explore/maps.ts",
 				"src/lib/explore/types.ts",
 				"src/lib/explore/tools/mockRag/**",
+				"src/lib/neo4j/index.ts",
+				"src/lib/neo4j/seed/index.ts",
+				"src/lib/neo4j/data/cvData.ts",
+				"src/lib/neo4j/seed/seedNeo4j.ts",
+				"src/lib/neo4j/models/**",
+				"src/lib/neo4j/relationships/**",
 			],
 			thresholds: {
 				lines: 100,
@@ -85,7 +95,6 @@ export default defineConfig({
 						],
 					},
 					setupFiles: [".storybook/vitest.setup.ts"],
-					// Add timeout and retry configuration for CI
 					testTimeout: process.env.CI === "true" ? 30000 : 10000,
 					hookTimeout: process.env.CI === "true" ? 30000 : 10000,
 				},
