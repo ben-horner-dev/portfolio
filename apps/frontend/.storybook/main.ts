@@ -59,7 +59,20 @@ const config: StorybookConfig = {
         ...config.resolve?.alias,
         "next/image": path.resolve(__dirname, "./mock-image.tsx"),
         "next/link": path.resolve(__dirname, "./mock-link.tsx"),
-        "react-18": "react",
+        react: path.resolve(__dirname, "../node_modules/react"),
+        "react-dom": path.resolve(__dirname, "../node_modules/react-dom"),
+        "react/jsx-runtime": path.resolve(
+          __dirname,
+          "../node_modules/react/jsx-runtime",
+        ),
+        "react/jsx-dev-runtime": path.resolve(
+          __dirname,
+          "../node_modules/react/jsx-dev-runtime",
+        ),
+        "react-dom/client": path.resolve(
+          __dirname,
+          "../node_modules/react-dom/client",
+        ),
       },
       dedupe: ["react", "react-dom"],
     };
