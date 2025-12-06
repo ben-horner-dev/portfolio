@@ -16,112 +16,111 @@ import { createFeatureFlag } from "@/flags";
 import { getContentConfig } from "@/lib/getContentConfig";
 import { identifyAnonymousUser } from "@/lib/identity/statsig";
 
-export const experimental_ppr = true;
 export async function generateMetadata(): Promise<Metadata> {
-	const contentConfig = await getContentConfig();
+  const contentConfig = await getContentConfig();
 
-	return {
-		metadataBase: new URL(contentConfig.seo.metadataBase),
-		title: contentConfig.seo.title,
-		description: contentConfig.seo.description,
-		keywords: contentConfig.seo.keywords,
-		authors: contentConfig.seo.authors.map((name) => ({ name })),
-		creator: contentConfig.seo.creator,
-		publisher: contentConfig.seo.publisher,
-		robots: contentConfig.seo.robots,
-		openGraph: contentConfig.seo.openGraph,
-		alternates: {
-			canonical: contentConfig.seo.canonical,
-		},
-	};
+  return {
+    metadataBase: new URL(contentConfig.seo.metadataBase),
+    title: contentConfig.seo.title,
+    description: contentConfig.seo.description,
+    keywords: contentConfig.seo.keywords,
+    authors: contentConfig.seo.authors.map((name) => ({ name })),
+    creator: contentConfig.seo.creator,
+    publisher: contentConfig.seo.publisher,
+    robots: contentConfig.seo.robots,
+    openGraph: contentConfig.seo.openGraph,
+    alternates: {
+      canonical: contentConfig.seo.canonical,
+    },
+  };
 }
 
 export default async function Home() {
-	const isHeroEnabled = await createFeatureFlag(
-		FeatureFlag.HERO,
-		identifyAnonymousUser,
-	)();
-	const isFooterEnabled = await createFeatureFlag(
-		FeatureFlag.FOOTER,
-		identifyAnonymousUser,
-	)();
+  const isHeroEnabled = await createFeatureFlag(
+    FeatureFlag.HERO,
+    identifyAnonymousUser,
+  )();
+  const isFooterEnabled = await createFeatureFlag(
+    FeatureFlag.FOOTER,
+    identifyAnonymousUser,
+  )();
 
-	const contentConfig = await getContentConfig();
-	const structuredData = {
-		"@context": contentConfig.seo.structuredData["@context"],
-		"@type": contentConfig.seo.structuredData["@type"],
-		name: contentConfig.seo.structuredData.person.name,
-		jobTitle: contentConfig.seo.structuredData.person.jobTitle,
-		description: contentConfig.seo.description,
-		url: contentConfig.seo.structuredData.person.url,
-		sameAs: contentConfig.socials.map((social) => social.href),
-	};
+  const contentConfig = await getContentConfig();
+  const structuredData = {
+    "@context": contentConfig.seo.structuredData["@context"],
+    "@type": contentConfig.seo.structuredData["@type"],
+    name: contentConfig.seo.structuredData.person.name,
+    jobTitle: contentConfig.seo.structuredData.person.jobTitle,
+    description: contentConfig.seo.description,
+    url: contentConfig.seo.structuredData.person.url,
+    sameAs: contentConfig.socials.map((social) => social.href),
+  };
 
-	const socials = (
-		<Socials
-			links={contentConfig.socials.map((social) => (
-				<SocialLink
-					key={social.key}
-					href={social.href}
-					alt={social.alt}
-					src={social.src}
-				/>
-			))}
-		/>
-	);
+  const socials = (
+    <Socials
+      links={contentConfig.socials.map((social) => (
+        <SocialLink
+          key={social.key}
+          href={social.href}
+          alt={social.alt}
+          src={social.src}
+        />
+      ))}
+    />
+  );
 
-	return (
-		<>
-			<script
-				type="application/ld+json"
-				/* biome-ignore lint/security/noDangerouslySetInnerHtml: Structured data for SEO */
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-			/>
-			<Background />
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        /* biome-ignore lint/security/noDangerouslySetInnerHtml: Structured data for SEO */
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <Background />
 
-			<div className="fixed inset-0 w-screen h-screen overflow-y-auto snap-y snap-mandatory px-2 sm:px-4 lg:px-6 xl:px-8 scroll-smooth">
-				{isHeroEnabled && (
-					<Screen
-						screenType={ScreenType.FIRST}
-						screenId={contentConfig.navigation.screenTypes.first}
-					>
-						<Hero
-							header={<TypographyH1 text={contentConfig.hero.title} />}
-							body={<TypographyP text={contentConfig.hero.description} />}
-							cta={
-								<HeroCTA
-									text={contentConfig.hero.ctaButton.text}
-									middleScreenId={contentConfig.navigation.screenTypes.middle}
-								/>
-							}
-						/>
-					</Screen>
-				)}
+      <div className="fixed inset-0 w-screen h-screen overflow-y-auto snap-y snap-mandatory px-2 sm:px-4 lg:px-6 xl:px-8 scroll-smooth">
+        {isHeroEnabled && (
+          <Screen
+            screenType={ScreenType.FIRST}
+            screenId={contentConfig.navigation.screenTypes.first}
+          >
+            <Hero
+              header={<TypographyH1 text={contentConfig.hero.title} />}
+              body={<TypographyP text={contentConfig.hero.description} />}
+              cta={
+                <HeroCTA
+                  text={contentConfig.hero.ctaButton.text}
+                  middleScreenId={contentConfig.navigation.screenTypes.middle}
+                />
+              }
+            />
+          </Screen>
+        )}
 
-				<Screen
-					screenType={ScreenType.MIDDLE}
-					screenId={contentConfig.navigation.screenTypes.middle}
-				>
-					<Suspense fallback={<Fallback />}>
-						<ChatWrapper />
-					</Suspense>
-				</Screen>
+        <Screen
+          screenType={ScreenType.MIDDLE}
+          screenId={contentConfig.navigation.screenTypes.middle}
+        >
+          <Suspense fallback={<Fallback />}>
+            <ChatWrapper />
+          </Suspense>
+        </Screen>
 
-				{isFooterEnabled && (
-					<Screen
-						screenType={ScreenType.FOOTER}
-						screenId={contentConfig.navigation.screenTypes.footer}
-					>
-						<Footer
-							title={<TypographyH1 text={contentConfig.footer.title} />}
-							description={
-								<TypographyP text={contentConfig.footer.description} />
-							}
-							socials={socials}
-						/>
-					</Screen>
-				)}
-			</div>
-		</>
-	);
+        {isFooterEnabled && (
+          <Screen
+            screenType={ScreenType.FOOTER}
+            screenId={contentConfig.navigation.screenTypes.footer}
+          >
+            <Footer
+              title={<TypographyH1 text={contentConfig.footer.title} />}
+              description={
+                <TypographyP text={contentConfig.footer.description} />
+              }
+              socials={socials}
+            />
+          </Screen>
+        )}
+      </div>
+    </>
+  );
 }

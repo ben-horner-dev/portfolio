@@ -1,12 +1,17 @@
-import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-	plugins: [tsconfigPaths(), react()],
-	test: {
-		environment: "jsdom",
-		include: ["src/**/*.spec.{ts,tsx}"],
-		exclude: ["src/**/*.stories.{js,ts,jsx,tsx}"],
-	},
+  plugins: [tsconfigPaths()],
+  test: {
+    environment: "node",
+    include: ["src/**/*.integration.spec.{ts,tsx}"],
+    exclude: ["src/**/*.stories.{js,ts,jsx,tsx}"],
+    testTimeout: 30000,
+    hookTimeout: 30000,
+    clearMocks: true,
+    sequence: {
+      hooks: "list",
+    },
+  },
 });

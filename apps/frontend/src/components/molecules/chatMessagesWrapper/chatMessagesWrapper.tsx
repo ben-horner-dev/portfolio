@@ -1,18 +1,18 @@
 interface ChatMessagesWrapperProps {
-	children: React.ReactNode;
-	messagesContainerRef?: React.RefObject<HTMLDivElement | null>;
+  children: React.ReactNode;
+  messagesContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export function ChatMessagesWrapper({
-	children,
-	messagesContainerRef,
+  children,
+  messagesContainerRef,
 }: ChatMessagesWrapperProps & { onScroll?: () => void }) {
-	return (
-		<div
-			ref={messagesContainerRef}
-			className="h-80 overflow-y-auto p-6 space-y-4  bg-transparent"
-		>
-			{children}
-		</div>
-	);
+  return (
+    <div
+      ref={messagesContainerRef}
+      className="h-80 overflow-y-auto p-6 space-y-4  bg-transparent"
+    >
+      {children}
+    </div>
+  );
 }

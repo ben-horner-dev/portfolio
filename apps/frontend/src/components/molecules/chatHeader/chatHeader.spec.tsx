@@ -5,12 +5,12 @@ import { TypographyP } from "@/components/atoms/p";
 import { ChatHeader } from "./chatHeader";
 
 describe("ChatHeader", () => {
-	it("renders", () => {
-		render(
-			<ChatHeader
-				title={<TypographyH2 text="Chat Support" />}
-				subtitle={<TypographyP text="How can we help you today?" />}
-			/>,
-		);
-	});
+  it("renders", () => {
+    render(
+      <ChatHeader
+        title={<TypographyH2 text="Chat Support" />}
+        subtitle={<TypographyP text="How can we help you today?" />}
+      />,
+    );
+  });
 });

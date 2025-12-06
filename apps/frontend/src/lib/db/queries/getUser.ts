@@ -5,14 +5,14 @@ import type { Database, ServerLessDatabase } from "@/lib/db/types";
 import { dbOperation } from "@/lib/db/utils";
 
 const _userQueryResult = async (
-	authId: string,
-	db: Database | ServerLessDatabase,
+  authId: string,
+  db: Database | ServerLessDatabase,
 ) => {
-	const user = await db.query.users.findFirst({
-		where: eq(users.authId, authId),
-	});
+  const user = await db.query.users.findFirst({
+    where: eq(users.authId, authId),
+  });
 
-	return user;
+  return user;
 };
 
 export const getUserByAuthId = await dbOperation(_userQueryResult);

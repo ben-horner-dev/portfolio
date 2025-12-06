@@ -6,29 +6,29 @@ import { ImageSrc } from "@/lib/constants";
 import { Socials } from "./socials";
 
 const createMockImage = (src: string): StaticImageData => ({
-	src,
-	height: 64,
-	width: 64,
-	blurDataURL:
-		"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-	blurWidth: 1,
-	blurHeight: 1,
+  src,
+  height: 64,
+  width: 64,
+  blurDataURL:
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+  blurWidth: 1,
+  blurHeight: 1,
 });
 
 describe("Socials", () => {
-	it("renders", () => {
-		render(
-			<Socials
-				links={[
-					<SocialLink
-						key="github"
-						href="https://github.com"
-						alt="GitHub"
-						src={ImageSrc.GITHUB}
-						imgGttr={() => createMockImage("/images/github.png")}
-					/>,
-				]}
-			/>,
-		);
-	});
+  it("renders", () => {
+    render(
+      <Socials
+        links={[
+          <SocialLink
+            key="github"
+            href="https://github.com"
+            alt="GitHub"
+            src={ImageSrc.GITHUB}
+            imgGttr={() => createMockImage("/images/github.png")}
+          />,
+        ]}
+      />,
+    );
+  });
 });

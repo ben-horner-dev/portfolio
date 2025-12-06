@@ -7,12 +7,37 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!.next",
+      "!.turbo",
+      "!node_modules",
+      "!dist",
+      "!build",
+      "!out",
+      "!coverage",
+      "!test-results",
+      "!test-results",
+      "!playwright-report",
+      "!blob-report",
+      "!playwright/.cache",
+      "!storybook-static",
+      "!build-storybook.log",
+      "!stories",
+      "!storybook.log",
+      "!.storybook"
+    ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
   },
   "linter": {
     "enabled": true,
@@ -23,6 +48,12 @@
       },
       "suspicious": {
         "noUnknownAtRules": "warn"
+      },
+      "complexity": {
+        "noImportantStyles": "off"
+      },
+      "style": {
+        "noDescendingSpecificity": "off"
       }
     },
     "domains": {
@@ -30,6 +61,26 @@
       "react": "recommended"
     }
   },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          },
+          "correctness": {
+            "noUnusedFunctionParameters": "off"
+          }
+        }
+      }
+    }
+  ],
   "json": {
     "formatter": {
       "enabled": true
