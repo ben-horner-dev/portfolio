@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ErrorFallback } from "@/components/atoms/errorFallback";
 
 const mockResetError = vi.fn();
@@ -7,6 +7,10 @@ const mockResetError = vi.fn();
 describe("ErrorFallback", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   it("renders error message and reset button", () => {
@@ -50,5 +54,45 @@ describe("ErrorFallback", () => {
     fireEvent.click(resetButton);
 
     expect(mockResetError).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders error details in development mode", () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+
+    const error = new Error("Development error");
+    render(
+      <ErrorFallback
+        error={error}
+        componentStack="TestComponent"
+        eventId="error-123"
+        resetError={mockResetError}
+      />,
+    );
+
+    expect(screen.getByText("Error Details (Development)")).toBeInTheDocument();
+    expect(screen.getByText("Development error")).toBeInTheDocument();
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it("renders string error in development mode", () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+
+    const error = "String error";
+    render(
+      <ErrorFallback
+        error={error}
+        componentStack="TestComponent"
+        eventId="error-123"
+        resetError={mockResetError}
+      />,
+    );
+
+    expect(screen.getByText("Error Details (Development)")).toBeInTheDocument();
+    expect(screen.getByText("String error")).toBeInTheDocument();
+
+    process.env.NODE_ENV = originalEnv;
   });
 });
