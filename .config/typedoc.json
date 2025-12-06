@@ -4,6 +4,13 @@
   "entryPoints": ["../apps/frontend"],
   "entryPointStrategy": "packages",
   "out": "../docs/code-docs",
+  "exclude": [
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**"
+  ],
   "plugin": [
     "typedoc-plugin-markdown",
     "typedoc-github-wiki-theme",
@@ -11,6 +18,7 @@
   ],
   "packageOptions": {
     "entryPoints": ["src/**/*.ts", "src/**/*.tsx"],
+    "tsconfig": "tsconfig.typedoc.json",
     "exclude": [
       "**/*.test.*",
       "**/*.spec.*",
