@@ -12,7 +12,7 @@ const logger = getLogger();
 
 const TOOL_NAME = "final_answer";
 
-/* v8 ignore next -- @preserve */
+/* v8 ignore start -- @preserve */
 export const finalAnswerTool = tool(
   async (props) => finalAnswer(props as FinalAnswerArgs),
   {
@@ -21,6 +21,7 @@ export const finalAnswerTool = tool(
     schema: FinalAnswerSchema,
   },
 );
+/* v8 ignore stop */
 
 export const finalAnswer = async ({
   answer,
