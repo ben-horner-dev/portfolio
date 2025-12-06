@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
 export type ConfigLoadErrorHandler = (
   error: unknown,
@@ -10,7 +11,8 @@ export function configLoader(
   onError: ConfigLoadErrorHandler,
 ): unknown {
   try {
-    const configFile = readFileSync(configPath, "utf8");
+    const absolutePath = resolve(process.cwd(), configPath);
+    const configFile = readFileSync(absolutePath, "utf8");
     const config: unknown = JSON.parse(configFile);
     return config;
   } catch (error) {
