@@ -16,7 +16,11 @@ const config: StorybookConfig = {
   ],
   framework: {
     name: "@storybook/nextjs-vite",
-    options: {},
+    options: {
+      builder: {
+        viteConfigPath: undefined,
+      },
+    },
   },
   viteFinal: async (config) => {
     config.cacheDir = path.join(
@@ -29,6 +33,7 @@ const config: StorybookConfig = {
       include: [
         "react",
         "react-dom",
+        "react-dom/client",
         "react/jsx-runtime",
         "react/jsx-dev-runtime",
         "axe-core",
@@ -36,7 +41,11 @@ const config: StorybookConfig = {
         "@storybook/addon-a11y/preview",
         "@storybook/react",
       ],
+      exclude: ["react-18"],
       force: process.env.CI === "true",
+      esbuildOptions: {
+        jsx: "automatic",
+      },
     };
 
     config.define = {
@@ -50,7 +59,9 @@ const config: StorybookConfig = {
         ...config.resolve?.alias,
         "next/image": path.resolve(__dirname, "./mock-image.tsx"),
         "next/link": path.resolve(__dirname, "./mock-link.tsx"),
+        "react-18": "react",
       },
+      dedupe: ["react", "react-dom"],
     };
 
     if (process.env.CI === "true") {

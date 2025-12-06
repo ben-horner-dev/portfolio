@@ -63,10 +63,13 @@ jobs:
             bun install
             bunx playwright install
 
-      - name: Clear Vite cache
+      - name: Clear all caches
         run: |
             rm -rf apps/frontend/node_modules/.cache
+            rm -rf apps/frontend/node_modules/.vite
             rm -rf apps/frontend/.next
+            rm -rf node_modules/.cache
+            rm -rf node_modules/.vite
 
       - name: Set up Database
         env:
