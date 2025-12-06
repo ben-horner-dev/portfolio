@@ -33,9 +33,6 @@ const config: StorybookConfig = {
       include: [
         "react",
         "react-dom",
-        "react-dom/client",
-        "react/jsx-runtime",
-        "react/jsx-dev-runtime",
         "axe-core",
         "@radix-ui/react-accordion",
         "@storybook/addon-a11y/preview",
@@ -59,20 +56,6 @@ const config: StorybookConfig = {
         ...config.resolve?.alias,
         "next/image": path.resolve(__dirname, "./mock-image.tsx"),
         "next/link": path.resolve(__dirname, "./mock-link.tsx"),
-        react: path.resolve(__dirname, "../node_modules/react"),
-        "react-dom": path.resolve(__dirname, "../node_modules/react-dom"),
-        "react/jsx-runtime": path.resolve(
-          __dirname,
-          "../node_modules/react/jsx-runtime",
-        ),
-        "react/jsx-dev-runtime": path.resolve(
-          __dirname,
-          "../node_modules/react/jsx-dev-runtime",
-        ),
-        "react-dom/client": path.resolve(
-          __dirname,
-          "../node_modules/react-dom/client",
-        ),
       },
       dedupe: ["react", "react-dom"],
     };
