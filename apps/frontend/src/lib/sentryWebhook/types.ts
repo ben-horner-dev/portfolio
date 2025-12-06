@@ -1,8 +1,8 @@
 import type { z } from "zod";
 import type {
-	SentryAlertSchema,
-	SentryWebhookPayloadSchema,
-	SlackMessageSchema,
+  SentryAlertSchema,
+  SentryWebhookPayloadSchema,
+  SlackMessageSchema,
 } from "./schema";
 
 export type SentryWebhookPayload = z.infer<typeof SentryWebhookPayloadSchema>;

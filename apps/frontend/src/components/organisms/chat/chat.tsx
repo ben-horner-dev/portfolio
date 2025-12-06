@@ -17,79 +17,79 @@ import type { ChatInput as ChatInputType } from "@/lib/schema";
 import { useChatStore } from "@/lib/stores/chatStore";
 
 interface ChatProps {
-	header: React.ReactElement<React.ComponentProps<typeof ChatHeader>>;
-	placeholderTexts: ChatInputType["placeholder"];
-	action: AgentServerAction;
+  header: React.ReactElement<React.ComponentProps<typeof ChatHeader>>;
+  placeholderTexts: ChatInputType["placeholder"];
+  action: AgentServerAction;
 }
 
 export function Chat({ header, placeholderTexts, action }: ChatProps) {
-	const { inputValue, isTyping, handleInputChange, handleSend } =
-		useChatInput();
-	const { messagesContainerRef, scrollToBottom } = useChatScroll();
-	const { messages, sendMessage } = useChatMessages(
-		action,
-		messagesContainerRef,
-	);
+  const { inputValue, isTyping, handleInputChange, handleSend } =
+    useChatInput();
+  const { messagesContainerRef, scrollToBottom } = useChatScroll();
+  const { messages, sendMessage } = useChatMessages(
+    action,
+    messagesContainerRef,
+  );
 
-	const { thoughts } = useChatStore();
+  const { thoughts } = useChatStore();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is stable from useChatScroll hook
-	useEffect(() => {
-		scrollToBottom();
-	}, [messages, thoughts]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is stable from useChatScroll hook
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, thoughts]);
 
-	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === "Enter" && !isTyping) {
-			sendMessage(inputValue);
-		}
-	};
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !isTyping) {
+      sendMessage(inputValue);
+    }
+  };
 
-	const handleSendMessage = () => {
-		const messageContent = inputValue.trim();
-		if (handleSend()) {
-			sendMessage(messageContent);
-		}
-	};
-	const input = (
-		<Input
-			placeholder={
-				isTyping ? placeholderTexts.typing : placeholderTexts.default
-			}
-			value={inputValue}
-			onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-				handleInputChange(e.target.value);
-			}}
-			onKeyDown={handleKeyPress}
-			disabled={isTyping}
-		/>
-	);
+  const handleSendMessage = () => {
+    const messageContent = inputValue.trim();
+    if (handleSend()) {
+      sendMessage(messageContent);
+    }
+  };
+  const input = (
+    <Input
+      placeholder={
+        isTyping ? placeholderTexts.typing : placeholderTexts.default
+      }
+      value={inputValue}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        handleInputChange(e.target.value);
+      }}
+      onKeyDown={handleKeyPress}
+      disabled={isTyping}
+    />
+  );
 
-	const handleQuickReply = (reply: string) => {
-		sendMessage(reply);
-	};
-	return (
-		<ChatWindowWrapper data-auth-required="true">
-			<div className="bg-card/30 backdrop-blur-sm rounded-2xl border border-border/20 shadow-2xl overflow-hidden hover:animate-terminal-glow transition-all duration-500">
-				{header}
-				<ChatMessagesWrapper messagesContainerRef={messagesContainerRef}>
-					{messages.map((message) => (
-						<span key={message.id}>
-							{message.content === null && (
-								<TypingIndicator message={message} />
-							)}
+  const handleQuickReply = (reply: string) => {
+    sendMessage(reply);
+  };
+  return (
+    <ChatWindowWrapper data-auth-required="true">
+      <div className="bg-card/30 backdrop-blur-sm rounded-2xl border border-border/20 shadow-2xl overflow-hidden hover:animate-terminal-glow transition-all duration-500">
+        {header}
+        <ChatMessagesWrapper messagesContainerRef={messagesContainerRef}>
+          {messages.map((message) => (
+            <span key={message.id}>
+              {message.content === null && (
+                <TypingIndicator message={message} />
+              )}
 
-							<Message message={message} onQuickReply={handleQuickReply} />
-						</span>
-					))}
-				</ChatMessagesWrapper>
+              <Message message={message} onQuickReply={handleQuickReply} />
+            </span>
+          ))}
+        </ChatMessagesWrapper>
 
-				<ChatInput
-					input={input}
-					button={
-						<SendButton onClick={handleSendMessage} disabled={isTyping} />
-					}
-				/>
-			</div>
-		</ChatWindowWrapper>
-	);
+        <ChatInput
+          input={input}
+          button={
+            <SendButton onClick={handleSendMessage} disabled={isTyping} />
+          }
+        />
+      </div>
+    </ChatWindowWrapper>
+  );
 }

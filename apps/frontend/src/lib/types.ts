@@ -2,7 +2,7 @@ import type { z } from "zod";
 import type { SessionSchema } from "@/lib/schema";
 
 export type TypographyProps = {
-	text: string;
+  text: string;
 };
 
 export type Session = z.infer<typeof SessionSchema>;

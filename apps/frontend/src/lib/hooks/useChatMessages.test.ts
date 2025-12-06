@@ -2,8 +2,8 @@ import { readStreamableValue } from "@ai-sdk/rsc";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-	checkDailyTokenCount,
-	updateTokenCount,
+  checkDailyTokenCount,
+  updateTokenCount,
 } from "@/lib/explore/agent/tokenCount";
 import { InterlocutorType } from "@/lib/explore/constants";
 import { AgentGraphError } from "@/lib/explore/errors";
@@ -20,19 +20,19 @@ const mockUpdateTokenCount = vi.mocked(updateTokenCount);
 const mockReadStreamableValue = vi.mocked(readStreamableValue);
 
 const mockMessages = [
-	{
-		id: "1",
-		content: "Hello",
-		type: InterlocutorType.HUMAN,
-		inputValue: "Hello",
-		thoughts: [],
-		quickReplies: [],
-	},
+  {
+    id: "1",
+    content: "Hello",
+    type: InterlocutorType.HUMAN,
+    inputValue: "Hello",
+    thoughts: [],
+    quickReplies: [],
+  },
 ];
 
 const mockConfig = {
-	model: "gpt-4",
-	temperature: 0.7,
+  model: "gpt-4",
+  temperature: 0.7,
 };
 
 const mockAction = vi.fn();
@@ -40,185 +40,185 @@ const mockAction = vi.fn();
 const mockGetState = vi.fn();
 
 describe("useChatMessages", () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-		mockUseChatStore.mockReturnValue({
-			messages: mockMessages,
-			setIsTyping: vi.fn(),
-			updateMessage: vi.fn(),
-			updateThoughts: vi.fn(),
-			chatId: "test-chat-id",
-			config: mockConfig,
-			addMessages: vi.fn(),
-			batchUpdate: vi.fn(),
-		});
-		mockUseChatStore.getState = mockGetState;
-		mockGetState.mockReturnValue({
-			setScrollPosition: vi.fn(),
-			batchUpdate: vi.fn(),
-		});
-		mockCheckDailyTokenCount.mockResolvedValue({
-			id: "user-id",
-			name: null,
-			email: "test@example.com",
-			tokens: 0,
-			authId: "auth-id",
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
-		mockUpdateTokenCount.mockResolvedValue({
-			id: "user-id",
-			name: null,
-			email: "test@example.com",
-			tokens: 100,
-			authId: "auth-id",
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
-		const mockAsyncIterable = {
-			async *[Symbol.asyncIterator]() {},
-		};
-		mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
-	});
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseChatStore.mockReturnValue({
+      messages: mockMessages,
+      setIsTyping: vi.fn(),
+      updateMessage: vi.fn(),
+      updateThoughts: vi.fn(),
+      chatId: "test-chat-id",
+      config: mockConfig,
+      addMessages: vi.fn(),
+      batchUpdate: vi.fn(),
+    });
+    mockUseChatStore.getState = mockGetState;
+    mockGetState.mockReturnValue({
+      setScrollPosition: vi.fn(),
+      batchUpdate: vi.fn(),
+    });
+    mockCheckDailyTokenCount.mockResolvedValue({
+      id: "user-id",
+      name: null,
+      email: "test@example.com",
+      tokens: 0,
+      authId: "auth-id",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    mockUpdateTokenCount.mockResolvedValue({
+      id: "user-id",
+      name: null,
+      email: "test@example.com",
+      tokens: 100,
+      authId: "auth-id",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {},
+    };
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+  });
 
-	it("should return messages and sendMessage function", () => {
-		const { result } = renderHook(() => useChatMessages(mockAction));
+  it("should return messages and sendMessage function", () => {
+    const { result } = renderHook(() => useChatMessages(mockAction));
 
-		expect(result.current.messages).toEqual(mockMessages);
-		expect(typeof result.current.sendMessage).toBe("function");
-	});
+    expect(result.current.messages).toEqual(mockMessages);
+    expect(typeof result.current.sendMessage).toBe("function");
+  });
 
-	it("should throw error when chatId is missing", async () => {
-		mockUseChatStore.mockReturnValue({
-			messages: mockMessages,
-			setIsTyping: vi.fn(),
-			updateMessage: vi.fn(),
-			updateThoughts: vi.fn(),
-			chatId: null,
-			config: mockConfig,
-			addMessages: vi.fn(),
-		});
+  it("should throw error when chatId is missing", async () => {
+    mockUseChatStore.mockReturnValue({
+      messages: mockMessages,
+      setIsTyping: vi.fn(),
+      updateMessage: vi.fn(),
+      updateThoughts: vi.fn(),
+      chatId: null,
+      config: mockConfig,
+      addMessages: vi.fn(),
+    });
 
-		const { result } = renderHook(() => useChatMessages(mockAction));
+    const { result } = renderHook(() => useChatMessages(mockAction));
 
-		await expect(result.current.sendMessage("test message")).rejects.toThrow(
-			AgentGraphError,
-		);
-	});
+    await expect(result.current.sendMessage("test message")).rejects.toThrow(
+      AgentGraphError,
+    );
+  });
 
-	it("should throw error when config is missing", async () => {
-		mockUseChatStore.mockReturnValue({
-			messages: mockMessages,
-			setIsTyping: vi.fn(),
-			updateMessage: vi.fn(),
-			updateThoughts: vi.fn(),
-			chatId: "test-chat-id",
-			config: null,
-			addMessages: vi.fn(),
-		});
+  it("should throw error when config is missing", async () => {
+    mockUseChatStore.mockReturnValue({
+      messages: mockMessages,
+      setIsTyping: vi.fn(),
+      updateMessage: vi.fn(),
+      updateThoughts: vi.fn(),
+      chatId: "test-chat-id",
+      config: null,
+      addMessages: vi.fn(),
+    });
 
-		const { result } = renderHook(() => useChatMessages(mockAction));
+    const { result } = renderHook(() => useChatMessages(mockAction));
 
-		await expect(result.current.sendMessage("test message")).rejects.toThrow(
-			AgentGraphError,
-		);
-	});
+    await expect(result.current.sendMessage("test message")).rejects.toThrow(
+      AgentGraphError,
+    );
+  });
 
-	it("should throw error when inputValue is missing", async () => {
-		const { result } = renderHook(() => useChatMessages(mockAction));
+  it("should throw error when inputValue is missing", async () => {
+    const { result } = renderHook(() => useChatMessages(mockAction));
 
-		await expect(result.current.sendMessage("")).rejects.toThrow(
-			"Message input value is required",
-		);
-	});
+    await expect(result.current.sendMessage("")).rejects.toThrow(
+      "Message input value is required",
+    );
+  });
 
-	it("should handle successful message sending", async () => {
-		const mockResponse = {
-			answer: "Test response",
-			courseLinks: ["link1", "link2"],
-			scratchPad: "Test thought",
-			totalTokens: 100,
-		};
+  it("should handle successful message sending", async () => {
+    const mockResponse = {
+      answer: "Test response",
+      courseLinks: ["link1", "link2"],
+      scratchPad: "Test thought",
+      totalTokens: 100,
+    };
 
-		const mockAsyncIterable = {
-			async *[Symbol.asyncIterator]() {
-				yield mockResponse;
-			},
-		};
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield mockResponse;
+      },
+    };
 
-		mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
-		mockAction.mockResolvedValue(mockResponse);
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+    mockAction.mockResolvedValue(mockResponse);
 
-		const { result } = renderHook(() => useChatMessages(mockAction));
+    const { result } = renderHook(() => useChatMessages(mockAction));
 
-		await act(async () => {
-			await result.current.sendMessage("Hello");
-		});
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
 
-		expect(mockCheckDailyTokenCount).toHaveBeenCalledWith("test-chat-id");
-		expect(mockAction).toHaveBeenCalledWith(
-			"Hello",
-			mockConfig,
-			mockMessages,
-			"test-chat-id",
-		);
-	});
+    expect(mockCheckDailyTokenCount).toHaveBeenCalledWith("test-chat-id");
+    expect(mockAction).toHaveBeenCalledWith(
+      "Hello",
+      mockConfig,
+      mockMessages,
+      "test-chat-id",
+    );
+  });
 
-	it("should handle stream errors", async () => {
-		const mockError = new Error("Stream error");
-		const mockAsyncIterable = {
-			async *[Symbol.asyncIterator]() {
-				yield { error: mockError };
-			},
-		};
+  it("should handle stream errors", async () => {
+    const mockError = new Error("Stream error");
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { error: mockError };
+      },
+    };
 
-		mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
 
-		const { result } = renderHook(() => useChatMessages(mockAction));
+    const { result } = renderHook(() => useChatMessages(mockAction));
 
-		await expect(result.current.sendMessage("Hello")).rejects.toThrow(
-			"Stream error",
-		);
-	});
+    await expect(result.current.sendMessage("Hello")).rejects.toThrow(
+      "Stream error",
+    );
+  });
 
-	it("should handle user facing errors", async () => {
-		const userFacingError = new Error("User facing error");
-		userFacingError.name = "UserFacingErrors";
-		mockAction.mockRejectedValue(userFacingError);
+  it("should handle user facing errors", async () => {
+    const userFacingError = new Error("User facing error");
+    userFacingError.name = "UserFacingErrors";
+    mockAction.mockRejectedValue(userFacingError);
 
-		const { result } = renderHook(() => useChatMessages(mockAction));
+    const { result } = renderHook(() => useChatMessages(mockAction));
 
-		await act(async () => {
-			await result.current.sendMessage("Hello");
-		});
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
 
-		const mockStore = mockUseChatStore.mock.results[0].value;
-		expect(mockStore.updateMessage).toHaveBeenCalledWith(
-			expect.any(String),
-			expect.objectContaining({
-				content: "User facing error",
-			}),
-		);
-	});
+    const mockStore = mockUseChatStore.mock.results[0].value;
+    expect(mockStore.updateMessage).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        content: "User facing error",
+      }),
+    );
+  });
 
-	it("should update scroll position when messagesContainerRef is provided", async () => {
-		const mockScrollTop = 100;
-		const mockContainer = {
-			scrollTop: mockScrollTop,
-		} as HTMLDivElement;
+  it("should update scroll position when messagesContainerRef is provided", async () => {
+    const mockScrollTop = 100;
+    const mockContainer = {
+      scrollTop: mockScrollTop,
+    } as HTMLDivElement;
 
-		const messagesContainerRef = { current: mockContainer };
+    const messagesContainerRef = { current: mockContainer };
 
-		const { result } = renderHook(() =>
-			useChatMessages(mockAction, messagesContainerRef),
-		);
+    const { result } = renderHook(() =>
+      useChatMessages(mockAction, messagesContainerRef),
+    );
 
-		await act(async () => {
-			await result.current.sendMessage("Hello");
-		});
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
 
-		expect(mockGetState().setScrollPosition).toHaveBeenCalledWith(
-			mockScrollTop,
-		);
-	});
+    expect(mockGetState().setScrollPosition).toHaveBeenCalledWith(
+      mockScrollTop,
+    );
+  });
 });

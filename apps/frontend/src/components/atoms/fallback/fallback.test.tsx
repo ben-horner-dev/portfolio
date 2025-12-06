@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { Fallback } from "@/components/atoms/fallback";
 
 describe("Fallback", () => {
-	it("renders loading text", () => {
-		render(<Fallback />);
-		expect(screen.getByText("Loading...")).toBeInTheDocument();
-	});
+  it("renders loading text", () => {
+    render(<Fallback />);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+  });
 });

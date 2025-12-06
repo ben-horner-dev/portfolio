@@ -542,6 +542,7 @@ class AgentOrchestrator {
     const binding = this.stateBindings[toolName] || { stateFields: [] };
 
     const injectedArgs = binding.stateFields.reduce(
+      // biome-ignore lint/suspicious/noExplicitAny: dynamic state field injection
       (args: any, field: string) => {
         args[field] = state[field as keyof AgentState];
         return args;

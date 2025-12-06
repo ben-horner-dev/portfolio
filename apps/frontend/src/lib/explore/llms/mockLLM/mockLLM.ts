@@ -19,6 +19,7 @@ export const getMockLLM = (
     throw new AgentGraphError("Temperature must be between 0 and 1");
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: LangChain runnable input type
   const mockRunnable = RunnableLambda.from(async (input: any) => {
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -48,13 +49,16 @@ export const getMockLLM = (
       content: "LLm response:",
       tool_calls: [tool_call],
     };
+    // biome-ignore lint/suspicious/noExplicitAny: LangChain type compatibility
   }) as any;
 
-  mockRunnable.bindTools = (tools: any[], options: any = {}) => {
+  // biome-ignore lint/suspicious/noExplicitAny: LangChain bindTools signature
+  mockRunnable.bindTools = (_tools: any[], _options: any = {}) => {
     return mockRunnable;
   };
 
-  mockRunnable.withConfig = (config: any) => {
+  // biome-ignore lint/suspicious/noExplicitAny: LangChain withConfig signature
+  mockRunnable.withConfig = (_config: any) => {
     return mockRunnable;
   };
 
