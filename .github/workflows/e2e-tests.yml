@@ -139,6 +139,12 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - name: Remove storybook override for Chromatic compatibility
+        run: |
+          # Chromatic's internal Storybook is incompatible with our security override
+          # Remove it only for this CI job - the override remains in the repo for other builds
+          jq 'del(.overrides.storybook)' package.json > tmp.json && mv tmp.json package.json
+          jq 'del(.overrides.storybook)' apps/frontend/package.json > tmp.json && mv tmp.json apps/frontend/package.json
       - name: Install dependencies
         run: bun i
       - name: Download Playwright test results
