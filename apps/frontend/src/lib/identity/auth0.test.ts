@@ -6,11 +6,13 @@ const mockGetUserByAuthId = vi.fn();
 const mockGetDb = vi.fn();
 const mockLoggerError = vi.fn();
 
-vi.doMock("@auth0/nextjs-auth0/server", () => ({
-  Auth0Client: vi
-    .fn()
-    .mockImplementation(() => ({ getSession: mockGetSession })),
-}));
+vi.doMock("@auth0/nextjs-auth0/server", () => {
+  return {
+    Auth0Client: class MockAuth0Client {
+      getSession = mockGetSession;
+    },
+  };
+});
 
 vi.doMock("../db/commands/upsertUser", () => ({
   upsertUser: mockUpsertUser,
