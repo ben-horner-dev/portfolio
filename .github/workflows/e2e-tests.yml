@@ -2,7 +2,6 @@ name: E2E Tests
 on:
   pull_request:
 
-
 permissions:
   id-token: write
   contents: read
@@ -38,8 +37,8 @@ jobs:
       AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
       AUTH0_SCOPE: ${{ secrets.AUTH0_SCOPE }}
       AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
-      AGENT_CONFIG_PATH: './src/config/integrationAgentConfig.json'
-      ALL_AGENT_CONFIG_PATH: './src/config/allAgentConfig.json'
+      AGENT_CONFIG_PATH: "./src/config/integrationAgentConfig.json"
+      ALL_AGENT_CONFIG_PATH: "./src/config/allAgentConfig.json"
       # secretlint-disable-next-line
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
     services:
@@ -146,12 +145,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: test-results
-          path: ./test-results
+          path: ./apps/frontend/test-results
       - name: Run Chromatic (Playwright)
         uses: chromaui/action@latest
         with:
           playwright: true
           projectToken: ${{ secrets.CHROMATIC_PROJECT_PLAYWRIGHT_TOKEN }}
+          workingDir: apps/frontend
 
       - name: Run Chromatic (Storybook)
         uses: chromaui/action@latest
