@@ -25,9 +25,7 @@ const mockLLM = {
 describe("Chat History Functions", () => {
   beforeEach(() => {
     vi.mocked(getCache).mockResolvedValue(mockCache);
-    vi.mocked(ChatOpenAI).mockImplementation(function () {
-      return mockLLM;
-    });
+    vi.mocked(ChatOpenAI).mockImplementation(() => mockLLM);
     mockLLM.invoke.mockResolvedValue({ content: "Mocked summary" });
   });
 

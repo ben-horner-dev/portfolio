@@ -5,13 +5,11 @@ vi.mock("neogma", async () => {
   const actual = await vi.importActual("neogma");
   return {
     ...actual,
-    Neogma: vi.fn().mockImplementation(function () {
-      return {
-        driver: {
-          close: vi.fn().mockResolvedValue(undefined),
-        },
-      };
-    }),
+    Neogma: vi.fn().mockImplementation(() => ({
+      driver: {
+        close: vi.fn().mockResolvedValue(undefined),
+      },
+    })),
   };
 });
 

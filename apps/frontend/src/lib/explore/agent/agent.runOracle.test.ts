@@ -35,6 +35,7 @@ vi.mock("@langchain/core/runnables", () => ({
   },
 }));
 
+import type { LLM } from "@langchain/core/language_models/llms";
 import {
   DeterministicAgentTrigger,
   ExecutionType,
@@ -51,7 +52,6 @@ import type {
   ExecutionStep,
   ToolName,
 } from "@/lib/explore/types";
-import type { LLM } from "@langchain/core/language_models/llms";
 import { createAgentOrchestrator } from "./agent";
 
 vi.mock("@/lib/logger", () => ({

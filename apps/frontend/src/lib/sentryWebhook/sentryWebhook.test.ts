@@ -1,6 +1,6 @@
-import { LogLevel } from "@/lib/logger";
 import type { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LogLevel } from "@/lib/logger";
 import {
   AuthenticationError,
   ConfigurationError,

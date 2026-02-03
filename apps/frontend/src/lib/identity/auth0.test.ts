@@ -7,9 +7,9 @@ const mockGetDb = vi.fn();
 const mockLoggerError = vi.fn();
 
 vi.doMock("@auth0/nextjs-auth0/server", () => ({
-  Auth0Client: vi.fn().mockImplementation(function () {
-    return { getSession: mockGetSession };
-  }),
+  Auth0Client: vi
+    .fn()
+    .mockImplementation(() => ({ getSession: mockGetSession })),
 }));
 
 vi.doMock("../db/commands/upsertUser", () => ({

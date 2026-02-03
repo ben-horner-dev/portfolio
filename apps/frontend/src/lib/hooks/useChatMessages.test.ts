@@ -1,3 +1,6 @@
+import { readStreamableValue } from "@ai-sdk/rsc";
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   checkDailyTokenCount,
   updateTokenCount,
@@ -5,9 +8,6 @@ import {
 import { InterlocutorType } from "@/lib/explore/constants";
 import { AgentGraphError } from "@/lib/explore/errors";
 import { useChatStore } from "@/lib/stores/chatStore";
-import { readStreamableValue } from "@ai-sdk/rsc";
-import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useChatMessages } from "./useChatMessages";
 
 vi.mock("@/lib/stores/chatStore");
