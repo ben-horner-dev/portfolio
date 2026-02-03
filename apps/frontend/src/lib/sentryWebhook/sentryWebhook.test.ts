@@ -540,6 +540,52 @@ describe("extractSentryData", () => {
     expect(res?.event.environment).toBe("unknown");
     expect(res?.event.tags).toEqual({});
   });
+
+  it("handles error resource with object project containing name", () => {
+    const webhookData = {
+      action: "created",
+      data: {
+        error: {
+          id: "e1",
+          title: "Error",
+          project: { name: "objectProjectName", slug: "obj-proj" },
+        },
+      },
+    };
+    const res = extractSentryData(webhookData, "error");
+    expect(res?.project).toBe("objectProjectName");
+  });
+
+  it("handles issue resource with object project missing name property", () => {
+    const webhookData = {
+      action: "created",
+      data: {
+        issue: {
+          id: "i1",
+          project: { slug: "project-slug" },
+          title: "Issue Title",
+          permalink: "https://sentry.io/i/1",
+        },
+      },
+    };
+    const res = extractSentryData(webhookData, "issue");
+    expect(res?.project).toBe("Unknown Project");
+  });
+
+  it("handles error resource with object project missing name property", () => {
+    const webhookData = {
+      action: "created",
+      data: {
+        error: {
+          id: "e1",
+          title: "Error",
+          project: { slug: "error-slug", id: 123 },
+        },
+      },
+    };
+    const res = extractSentryData(webhookData, "error");
+    expect(res?.project).toBe("Unknown Project");
+  });
 });
 
 describe("parseWebhookPayload", () => {

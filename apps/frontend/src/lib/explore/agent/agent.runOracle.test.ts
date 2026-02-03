@@ -220,7 +220,7 @@ describe("AgentOrchestrator runOracle", () => {
     );
   });
 
-  it.skip("should return intermediate_steps when over max tool_calls exists", async () => {
+  it("should return intermediate_steps when over max tool_calls exists", async () => {
     const mockOracle = {
       bindTools: vi.fn(() => ({
         invoke: vi.fn().mockResolvedValue({

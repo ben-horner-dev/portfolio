@@ -164,6 +164,81 @@ describe("useChatMessages", () => {
     );
   });
 
+  it("should handle streaming response with only courseLinks", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { courseLinks: ["link1", "link2"] };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    const mockStore = mockUseChatStore.mock.results[0].value;
+    expect(mockStore.updateMessage).toHaveBeenCalled();
+  });
+
+  it("should handle streaming response with only scratchPad", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { scratchPad: "thinking..." };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    const mockStore = mockUseChatStore.mock.results[0].value;
+    expect(mockStore.updateThoughts).toHaveBeenCalled();
+  });
+
+  it("should handle streaming response with only answer", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { answer: "The answer is 42" };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    const mockStore = mockUseChatStore.mock.results[0].value;
+    expect(mockStore.updateMessage).toHaveBeenCalled();
+  });
+
+  it("should handle streaming response with only totalTokens", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { totalTokens: 50 };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    expect(mockUpdateTokenCount).toHaveBeenCalled();
+  });
+
   it("should handle stream errors", async () => {
     const mockError = new Error("Stream error");
     const mockAsyncIterable = {

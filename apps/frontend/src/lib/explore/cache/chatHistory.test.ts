@@ -4,15 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getCache } from "./cache";
 import { readCacheHistory, writeChatHistory } from "./chatHistory";
 
-vi.mock("./cache");
-vi.mock("@langchain/openai");
-vi.mock("@/lib/explore/constants", () => ({
-  InterlocutorType: {
-    HUMAN: "human",
-    AI: "ai",
-  },
-}));
-
 const mockCache = {
   get: vi.fn(),
   set: vi.fn(),
@@ -22,10 +13,23 @@ const mockLLM = {
   invoke: vi.fn(),
 } as any;
 
+vi.mock("./cache");
+vi.mock("@langchain/openai", () => ({
+  ChatOpenAI: vi.fn().mockImplementation(function (this: any) {
+    Object.assign(this, mockLLM);
+    return this;
+  }),
+}));
+vi.mock("@/lib/explore/constants", () => ({
+  InterlocutorType: {
+    HUMAN: "human",
+    AI: "ai",
+  },
+}));
+
 describe("Chat History Functions", () => {
   beforeEach(() => {
     vi.mocked(getCache).mockResolvedValue(mockCache);
-    vi.mocked(ChatOpenAI).mockImplementation(() => mockLLM);
     mockLLM.invoke.mockResolvedValue({ content: "Mocked summary" });
   });
 

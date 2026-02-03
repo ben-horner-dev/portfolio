@@ -222,67 +222,65 @@ export const formatSlackMessage = (
   const environment = data.event.environment || "unknown";
   const actionText = action ? ` (${action})` : "";
 
-  const slackMessage: SlackMessage = {
-    blocks: [
-      {
-        type: "header",
-        text: {
-          type: "plain_text",
-          text: `${severity} Sentry Alert - ${data.project}${actionText}`,
-          emoji: true,
-        },
-      },
-      {
-        type: "section",
-        fields: [
-          {
-            type: "mrkdwn",
-            text: `*Level:* ${data.level.toUpperCase()}`,
-          },
-          {
-            type: "mrkdwn",
-            text: `*Environment:* ${environment}`,
-          },
-          {
-            type: "mrkdwn",
-            text: `*Event ID:* ${data.event.event_id}`,
-          },
-          {
-            type: "mrkdwn",
-            text: `*Time:* ${new Date(data.event.timestamp).toLocaleString()}`,
-          },
-        ],
-      },
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Message:* ${data.message}`,
-        },
-      },
-    ],
-  };
+  // Build fields array - start with base fields, add optional ones
+  const fields: Array<{ type: string; text: string }> = [
+    {
+      type: "mrkdwn",
+      text: `*Level:* ${data.level.toUpperCase()}`,
+    },
+    {
+      type: "mrkdwn",
+      text: `*Environment:* ${environment}`,
+    },
+    {
+      type: "mrkdwn",
+      text: `*Event ID:* ${data.event.event_id}`,
+    },
+    {
+      type: "mrkdwn",
+      text: `*Time:* ${new Date(data.event.timestamp).toLocaleString()}`,
+    },
+  ];
 
-  const fieldsBlock = slackMessage.blocks?.[1];
-  if (fieldsBlock?.fields && Array.isArray(fieldsBlock.fields)) {
-    if (data.culprit) {
-      fieldsBlock.fields.push({
-        type: "mrkdwn",
-        text: `*Culprit:* \`${data.culprit}\``,
-      });
-    }
-
-    if (data.event.user?.email || data.event.user?.id) {
-      const userInfo = data.event.user.email || data.event.user.id;
-      fieldsBlock.fields.push({
-        type: "mrkdwn",
-        text: `*User:* ${userInfo}`,
-      });
-    }
+  if (data.culprit) {
+    fields.push({
+      type: "mrkdwn",
+      text: `*Culprit:* \`${data.culprit}\``,
+    });
   }
 
+  if (data.event.user?.email || data.event.user?.id) {
+    const userInfo = data.event.user.email || data.event.user.id;
+    fields.push({
+      type: "mrkdwn",
+      text: `*User:* ${userInfo}`,
+    });
+  }
+
+  const blocks: SlackMessage["blocks"] = [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: `${severity} Sentry Alert - ${data.project}${actionText}`,
+        emoji: true,
+      },
+    },
+    {
+      type: "section",
+      fields,
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Message:* ${data.message}`,
+      },
+    },
+  ];
+
   if (data.url) {
-    slackMessage.blocks?.push({
+    blocks.push({
       type: "actions",
       elements: [
         {
@@ -299,7 +297,7 @@ export const formatSlackMessage = (
     });
   }
 
-  return slackMessage;
+  return { blocks };
 };
 
 const getSeverityEmoji = (level: string): string => {

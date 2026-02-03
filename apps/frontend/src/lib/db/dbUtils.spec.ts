@@ -221,6 +221,23 @@ describe("getDb singleton pattern", () => {
     const { db: newProdDb } = await getDb(testUri, Environment.PRODUCTION);
     expect(newProdDb).toBe(mockProdDbInstance);
   });
+
+  it("should return same production connection on subsequent calls (singleton behavior)", async () => {
+    const { getDb } = await import("./utils");
+
+    const connection1 = await getDb(testUri, Environment.PRODUCTION);
+    const connection2 = await getDb(testUri, Environment.PRODUCTION);
+    const connection3 = await getDb("different-uri", Environment.PRODUCTION);
+
+    expect(mockNeon).toHaveBeenCalledOnce();
+    expect(mockServerLessDrizzle).toHaveBeenCalledOnce();
+
+    expect(connection1.db).toBe(mockProdDbInstance);
+    expect(connection2.db).toBe(mockProdDbInstance);
+    expect(connection3.db).toBe(mockProdDbInstance);
+    expect(connection1.db).toBe(connection2.db);
+    expect(connection2.db).toBe(connection3.db);
+  });
 });
 
 describe("dbOperation wrapper", () => {
@@ -257,10 +274,12 @@ describe("dbOperation wrapper", () => {
     const mockOperation = vi
       .fn()
       .mockRejectedValue(new Error("Database error"));
+    // Explicitly set name to empty string to test the falsy branch
+    Object.defineProperty(mockOperation, "name", { value: "" });
     const wrappedOperation = await dbOperation(mockOperation);
 
     await expect(wrappedOperation()).rejects.toThrow(
-      /Failed to .+:[\s\S]*Error: Database error/,
+      /Failed to Unknown operation:[\s\S]*Error: Database error/,
     );
   });
 

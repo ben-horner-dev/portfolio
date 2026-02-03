@@ -1,15 +1,18 @@
 import { NeogmaError } from "neogma";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const mockDriverClose = vi.fn().mockResolvedValue(undefined);
+
 vi.mock("neogma", async () => {
   const actual = await vi.importActual("neogma");
   return {
     ...actual,
-    Neogma: vi.fn().mockImplementation(() => ({
-      driver: {
-        close: vi.fn().mockResolvedValue(undefined),
-      },
-    })),
+    Neogma: vi.fn().mockImplementation(function (this: any) {
+      this.driver = {
+        close: mockDriverClose,
+      };
+      return this;
+    }),
   };
 });
 

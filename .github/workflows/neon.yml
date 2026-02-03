@@ -21,12 +21,16 @@ jobs:
 
       - name: Debug Deployment Event
         if: github.event_name == 'deployment_status'
+        env:
+          EVENT_JSON: ${{ toJson(github.event) }}
         run: |
           echo "🔍 Full deployment event payload:"
-          echo '${{ toJson(github.event) }}'
+          echo "$EVENT_JSON"
 
       - name: Extract PR and Branch Info
         id: extract_info
+        env:
+          DEPLOYMENT_PAYLOAD: ${{ toJson(github.event.deployment.payload) }}
         run: |
           ./tools/ci/extract-pr-info.sh \
             "${{ github.event_name }}" \
@@ -35,7 +39,7 @@ jobs:
             "${{ github.repository_owner }}" \
             "${{ github.event.deployment.ref }}" \
             "${{ github.event.deployment.environment }}" \
-            '${{ toJson(github.event.deployment.payload) }}' \
+            "$DEPLOYMENT_PAYLOAD" \
             "${{ github.event.deployment.description }}" \
             "${{ github.event.number }}" \
             "${{ github.head_ref }}"
