@@ -168,7 +168,7 @@ describe("AgentOrchestrator runOracle", () => {
 
     orchestrator = await createAgentOrchestrator(
       config,
-      MockGraphFactory as any
+      MockGraphFactory as any,
     );
     orchestrator.initialCall = false;
     orchestrator.stream = {
@@ -198,7 +198,7 @@ describe("AgentOrchestrator runOracle", () => {
     orchestrator.llm = mockOracle;
 
     await expect(orchestrator.runOracle(mockState)).rejects.toThrow(
-      "No tool calls found in oracle output"
+      "No tool calls found in oracle output",
     );
   });
 
@@ -216,7 +216,7 @@ describe("AgentOrchestrator runOracle", () => {
     } as unknown as LLM;
     orchestrator.llm = mockOracle;
     await expect(orchestrator.runOracle(mockState)).rejects.toThrow(
-      "No tool calls found in oracle output"
+      "No tool calls found in oracle output",
     );
   });
 
@@ -293,13 +293,13 @@ describe("AgentOrchestrator runOracle", () => {
   it("should throw AgentGraphError when tools is null or undefined", async () => {
     const orchestratorWithNoTools = await createAgentOrchestrator(
       config,
-      MockGraphFactory as any
+      MockGraphFactory as any,
     );
     (orchestratorWithNoTools as any).initialCall = false;
     orchestratorWithNoTools.handleTriggers = vi.fn().mockResolvedValue(null);
 
     await expect(orchestratorWithNoTools.runOracle(mockState)).rejects.toThrow(
-      "No Tools Found"
+      "No Tools Found",
     );
   });
 
@@ -315,7 +315,7 @@ describe("AgentOrchestrator runOracle", () => {
     orchestrator.llm = mockOracleWithoutBindTools;
 
     await expect(orchestrator.runOracle(mockState)).rejects.toThrow(
-      "LLM does not have bindTools method"
+      "LLM does not have bindTools method",
     );
   });
 
@@ -407,7 +407,7 @@ describe("AgentOrchestrator runOracle", () => {
     expect(orchestrator.stream.update).toHaveBeenCalledWith(
       expect.objectContaining({
         totalTokens: 0,
-      })
+      }),
     );
   });
 
@@ -451,7 +451,7 @@ describe("AgentOrchestrator runOracle", () => {
     expect(orchestrator.stream.update).toHaveBeenCalledWith(
       expect.objectContaining({
         totalTokens: 20,
-      })
+      }),
     );
   });
 
@@ -497,7 +497,7 @@ describe("AgentOrchestrator runOracle", () => {
     expect(orchestrator.stream.update).toHaveBeenCalledWith(
       expect.objectContaining({
         totalTokens: 30,
-      })
+      }),
     );
 
     vi.doMock("@langchain/core/runnables", () => ({
@@ -505,7 +505,7 @@ describe("AgentOrchestrator runOracle", () => {
         from: vi.fn((runnables) => ({
           invoke: vi.fn(async (input) => {
             const lambda = runnables.find(
-              (r: any) => r._getType?.() === "RunnableLambda"
+              (r: any) => r._getType?.() === "RunnableLambda",
             );
             if (lambda) {
               return await lambda.invoke(input);
@@ -565,7 +565,7 @@ describe("AgentOrchestrator runOracle", () => {
     expect(orchestrator.stream.update).toHaveBeenCalledWith(
       expect.objectContaining({
         totalTokens: 0,
-      })
+      }),
     );
 
     vi.doMock("@langchain/core/runnables", () => ({
@@ -573,7 +573,7 @@ describe("AgentOrchestrator runOracle", () => {
         from: vi.fn((runnables) => ({
           invoke: vi.fn(async (input) => {
             const lambda = runnables.find(
-              (r: any) => r._getType?.() === "RunnableLambda"
+              (r: any) => r._getType?.() === "RunnableLambda",
             );
             if (lambda) {
               return await lambda.invoke(input);
@@ -658,7 +658,7 @@ describe("AgentOrchestrator runOracle", () => {
       log: "default log",
     });
     expect(result.intermediateSteps[0].executionType).toBe(
-      ExecutionType.PARALLEL
+      ExecutionType.PARALLEL,
     );
     expect(result.intermediateSteps[0].results).toEqual(["", ""]);
     expect(result.intermediateSteps[0].timestamp).toBeTypeOf("number");
@@ -703,7 +703,7 @@ describe("AgentOrchestrator runOracle", () => {
       log: "default log",
     });
     expect(result.intermediateSteps[0].executionType).toBe(
-      ExecutionType.SEQUENTIAL
+      ExecutionType.SEQUENTIAL,
     );
     expect(result.intermediateSteps[0].results).toEqual([""]);
     expect(result.intermediateSteps[0].timestamp).toBeTypeOf("number");
@@ -727,7 +727,7 @@ describe("AgentOrchestrator runOracle", () => {
 
       orchestrator = await createAgentOrchestrator(
         config,
-        MockGraphFactory as any
+        MockGraphFactory as any,
       );
 
       mockState = {
@@ -766,7 +766,7 @@ describe("AgentOrchestrator runOracle", () => {
 
       expect(orchestrator.getInitialCallTools).toHaveBeenCalled();
       expect(orchestrator.getMaxIntermediateStepsTool).toHaveBeenCalledWith(
-        mockState
+        mockState,
       );
       expect(orchestrator.getNextTool).not.toHaveBeenCalled();
       expect(result).toEqual([{ name: "max_steps_tool" }]);
@@ -784,7 +784,7 @@ describe("AgentOrchestrator runOracle", () => {
 
       expect(orchestrator.getInitialCallTools).toHaveBeenCalled();
       expect(orchestrator.getMaxIntermediateStepsTool).toHaveBeenCalledWith(
-        mockState
+        mockState,
       );
       expect(orchestrator.getNextTool).toHaveBeenCalledWith(mockState);
       expect(result).toEqual([{ name: "next_tool" }]);
@@ -881,7 +881,7 @@ describe("AgentOrchestrator runOracle", () => {
 
       orchestrator = await createAgentOrchestrator(
         config,
-        MockGraphFactory as any
+        MockGraphFactory as any,
       );
     });
 
@@ -913,7 +913,7 @@ describe("AgentOrchestrator runOracle", () => {
       orchestrator.allTools = [];
 
       expect(() => orchestrator.getInitialCallTools()).toThrow(
-        "Initial Tool not found: missing_tool. The tool must be one of: existing_tool"
+        "Initial Tool not found: missing_tool. The tool must be one of: existing_tool",
       );
     });
 
@@ -926,7 +926,7 @@ describe("AgentOrchestrator runOracle", () => {
       orchestrator.allTools = [otherTool];
 
       expect(() => orchestrator.getInitialCallTools()).toThrow(
-        "Initial tool: test_tool must be one of the tool group: other_tool"
+        "Initial tool: test_tool must be one of the tool group: other_tool",
       );
     });
 
@@ -937,7 +937,7 @@ describe("AgentOrchestrator runOracle", () => {
       orchestrator.allTools = [{ name: "available_tool" }];
 
       expect(() => orchestrator.getInitialCallTools()).toThrow(
-        "No Initial tools were found, ensure you have selected at least one from the following: available_tool"
+        "No Initial tools were found, ensure you have selected at least one from the following: available_tool",
       );
     });
 
@@ -974,7 +974,7 @@ describe("AgentOrchestrator runOracle", () => {
 
       orchestrator = await createAgentOrchestrator(
         config,
-        MockGraphFactory as any
+        MockGraphFactory as any,
       );
 
       mockState = {
@@ -1059,7 +1059,7 @@ describe("AgentOrchestrator runOracle", () => {
 
       orchestrator = await createAgentOrchestrator(
         config,
-        MockGraphFactory as any
+        MockGraphFactory as any,
       );
 
       mockState = {

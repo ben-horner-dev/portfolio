@@ -38,7 +38,7 @@ describe("neogma singleton", () => {
 
       expect(() => getNeogma()).toThrow(NeogmaError);
       expect(() => getNeogma()).toThrow(
-        "NEO4J_URI, NEO4J_USER, and NEO4J_PASS environment variables must be set"
+        "NEO4J_URI, NEO4J_USER, and NEO4J_PASS environment variables must be set",
       );
     });
 

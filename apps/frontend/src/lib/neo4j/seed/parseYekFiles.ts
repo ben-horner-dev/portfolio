@@ -125,7 +125,7 @@ export const parseYekFiles = async (): Promise<ParsedProject[]> => {
     if (!parseResult.success) {
       console.warn(
         `Invalid metadata in ${jsonFile}:`,
-        parseResult.error.issues
+        parseResult.error.issues,
       );
       continue;
     }
@@ -156,7 +156,7 @@ export const parseYekFiles = async (): Promise<ParsedProject[]> => {
 
 const parseCodeContent = (
   content: string,
-  projectId: string
+  projectId: string,
 ): { codeFiles: ParsedCodeFile[]; codeChunks: ParsedCodeChunk[] } => {
   const codeFiles: ParsedCodeFile[] = [];
   const codeChunks: ParsedCodeChunk[] = [];
@@ -258,12 +258,12 @@ const extractTechnologies = (content: string): string[] => {
 
 const calculateComplexity = (
   files: ParsedCodeFile[],
-  chunkCount: number
+  chunkCount: number,
 ): number => {
   const fileScore = Math.min(files.length / 10, 3);
   const lineScore = Math.min(
     files.reduce((sum, f) => sum + f.lineCount, 0) / 1000,
-    4
+    4,
   );
   const chunkScore = Math.min(chunkCount / 20, 3);
 

@@ -102,7 +102,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("test message")).rejects.toThrow(
-      AgentGraphError
+      AgentGraphError,
     );
   });
 
@@ -120,7 +120,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("test message")).rejects.toThrow(
-      AgentGraphError
+      AgentGraphError,
     );
   });
 
@@ -128,7 +128,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("")).rejects.toThrow(
-      "Message input value is required"
+      "Message input value is required",
     );
   });
 
@@ -160,7 +160,7 @@ describe("useChatMessages", () => {
       "Hello",
       mockConfig,
       mockMessages,
-      "test-chat-id"
+      "test-chat-id",
     );
   });
 
@@ -252,7 +252,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("Hello")).rejects.toThrow(
-      "Stream error"
+      "Stream error",
     );
   });
 
@@ -272,7 +272,7 @@ describe("useChatMessages", () => {
       expect.any(String),
       expect.objectContaining({
         content: "User facing error",
-      })
+      }),
     );
   });
 
@@ -285,7 +285,7 @@ describe("useChatMessages", () => {
     const messagesContainerRef = { current: mockContainer };
 
     const { result } = renderHook(() =>
-      useChatMessages(mockAction, messagesContainerRef)
+      useChatMessages(mockAction, messagesContainerRef),
     );
 
     await act(async () => {
@@ -293,7 +293,7 @@ describe("useChatMessages", () => {
     });
 
     expect(mockGetState().setScrollPosition).toHaveBeenCalledWith(
-      mockScrollTop
+      mockScrollTop,
     );
   });
 });

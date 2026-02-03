@@ -39,7 +39,7 @@ describe("parseYekFiles", () => {
 
       expect(result).toEqual([]);
       expect(consoleSpy).toHaveBeenCalledWith(
-        "Missing txt file for project1.json, skipping..."
+        "Missing txt file for project1.json, skipping...",
       );
 
       consoleSpy.mockRestore();
@@ -234,7 +234,7 @@ more content
 
       const manyLinesContent = Array.from(
         { length: 50 },
-        (_, i) => `>>>> src/file${i}.ts\nconst x${i} = ${i};`
+        (_, i) => `>>>> src/file${i}.ts\nconst x${i} = ${i};`,
       ).join("\n\n");
 
       mockReaddirSync.mockReturnValue([

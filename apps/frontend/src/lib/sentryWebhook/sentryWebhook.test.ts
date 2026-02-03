@@ -44,7 +44,7 @@ describe("verifySignature", () => {
     const result = await verifySignature(
       "test-body",
       "test-signature",
-      "test-secret"
+      "test-secret",
     );
     expect(typeof result).toBe("boolean");
   });
@@ -65,14 +65,14 @@ describe("sendSlackMessage", () => {
   it("throws on non-OK response", async () => {
     const fetchFn = vi.fn().mockResolvedValue({ ok: false, status: 500 });
     await expect(
-      sendSlackMessage("https://hooks.slack.com", { text: "hi" }, { fetchFn })
+      sendSlackMessage("https://hooks.slack.com", { text: "hi" }, { fetchFn }),
     ).rejects.toBeInstanceOf(SlackApiError);
   });
 
   it("posts payload successfully", async () => {
     const fetchFn = vi.fn().mockResolvedValue({ ok: true, status: 200 });
     await expect(
-      sendSlackMessage("https://hooks.slack.com", { text: "hi" }, { fetchFn })
+      sendSlackMessage("https://hooks.slack.com", { text: "hi" }, { fetchFn }),
     ).resolves.toBeUndefined();
     expect(fetchFn).toHaveBeenCalled();
   });
@@ -88,7 +88,7 @@ describe("sendSlackMessage", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: "hi" }),
-      })
+      }),
     );
   });
 });
@@ -129,15 +129,15 @@ describe("formatSlackMessage", () => {
       | { fields?: Array<{ text: string }> }
       | undefined;
     expect(
-      fieldsBlock?.fields?.some((f) => String(f.text).includes("Culprit"))
+      fieldsBlock?.fields?.some((f) => String(f.text).includes("Culprit")),
     ).toBe(true);
     expect(
-      fieldsBlock?.fields?.some((f) => String(f.text).includes("User"))
+      fieldsBlock?.fields?.some((f) => String(f.text).includes("User")),
     ).toBe(true);
     expect(
       (msg.blocks || []).some(
-        (b) => (b as { type?: string }).type === "actions"
-      )
+        (b) => (b as { type?: string }).type === "actions",
+      ),
     ).toBe(true);
   });
 
@@ -235,7 +235,7 @@ describe("formatSlackMessage", () => {
     const fieldsBlock = msg.blocks?.[1];
     expect(fieldsBlock?.fields).toBeDefined();
     expect(
-      fieldsBlock?.fields?.some((field) => field.text.includes("Culprit"))
+      fieldsBlock?.fields?.some((field) => field.text.includes("Culprit")),
     ).toBe(true);
   });
 
@@ -256,7 +256,7 @@ describe("formatSlackMessage", () => {
     const fieldsBlock = msg.blocks?.[1];
     expect(fieldsBlock?.fields).toBeDefined();
     expect(
-      fieldsBlock?.fields?.some((field) => field.text.includes("User"))
+      fieldsBlock?.fields?.some((field) => field.text.includes("User")),
     ).toBe(true);
   });
 
@@ -276,8 +276,8 @@ describe("formatSlackMessage", () => {
     expect(fieldsBlock?.fields).toBeDefined();
     expect(
       fieldsBlock?.fields?.some((field) =>
-        field.text.includes("*User:* test@example.com")
-      )
+        field.text.includes("*User:* test@example.com"),
+      ),
     ).toBe(true);
   });
 
@@ -297,8 +297,8 @@ describe("formatSlackMessage", () => {
     expect(fieldsBlock?.fields).toBeDefined();
     expect(
       fieldsBlock?.fields?.some((field) =>
-        field.text.includes("*User:* test-user-123")
-      )
+        field.text.includes("*User:* test-user-123"),
+      ),
     ).toBe(true);
   });
 });
@@ -354,7 +354,7 @@ describe("extractSentryData", () => {
       { action: "x", data: {} } as unknown as Parameters<
         typeof extractSentryData
       >[0],
-      "something"
+      "something",
     );
     expect(res).toBeNull();
   });
@@ -364,7 +364,7 @@ describe("extractSentryData", () => {
       { action: "x", data: {} } as unknown as Parameters<
         typeof extractSentryData
       >[0],
-      "issue"
+      "issue",
     );
     expect(res).toBeNull();
   });
@@ -375,7 +375,7 @@ describe("extractSentryData", () => {
         action: "x",
         data: { error: { id: "1", project: "stringProj", title: "t" } },
       } as unknown as Parameters<typeof extractSentryData>[0],
-      "error"
+      "error",
     );
     expect(res?.project).toBe("stringProj");
   });
@@ -600,7 +600,7 @@ describe("parseWebhookPayload", () => {
 
   it("throws ZodError on schema violation", () => {
     expect(() =>
-      parseWebhookPayload(JSON.stringify({ wrong: true }))
+      parseWebhookPayload(JSON.stringify({ wrong: true })),
     ).toThrow();
   });
 });
@@ -695,7 +695,7 @@ describe("sentryWebhook", () => {
               level: LogLevel.ERROR,
             },
           },
-        })
+        }),
       ),
       headers: {
         get: vi.fn().mockImplementation((key: string) => {
@@ -709,10 +709,10 @@ describe("sentryWebhook", () => {
     mockSlackWebhookUrl = "https://hooks.slack.com/test";
 
     vi.spyOn(global.crypto.subtle, "importKey").mockResolvedValue(
-      "mock-key" as unknown as CryptoKey
+      "mock-key" as unknown as CryptoKey,
     );
     vi.spyOn(global.crypto.subtle, "sign").mockResolvedValue(
-      new Uint8Array([1, 2, 3]) as unknown as ArrayBuffer
+      new Uint8Array([1, 2, 3]) as unknown as ArrayBuffer,
     );
 
     global.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200 });
@@ -755,7 +755,7 @@ describe("sentryWebhook", () => {
 
     const response = await sentryWebhook(
       invalidSignatureRequest,
-      mockSlackWebhookUrl
+      mockSlackWebhookUrl,
     );
     expect(response.status).toBe(401);
 
@@ -776,7 +776,7 @@ describe("sentryWebhook", () => {
       expect.objectContaining({
         method: "POST",
         headers: { "Content-Type": "application/json" },
-      })
+      }),
     );
   });
 
@@ -787,7 +787,7 @@ describe("sentryWebhook", () => {
         JSON.stringify({
           action: "created",
           data: {},
-        })
+        }),
       ),
       headers: {
         get: vi.fn().mockImplementation((key: string) => {
@@ -812,13 +812,13 @@ describe("sentryWebhook", () => {
       text: vi.fn().mockResolvedValue(
         JSON.stringify({
           data: {},
-        })
+        }),
       ),
     } as unknown as NextRequest;
 
     const response = await sentryWebhook(
       invalidPayloadRequest,
-      mockSlackWebhookUrl
+      mockSlackWebhookUrl,
     );
     expect(response.status).toBe(400);
 
@@ -883,7 +883,7 @@ describe("sentryWebhook", () => {
               tags: [["environment", "test"]],
             },
           },
-        })
+        }),
       ),
       headers: {
         get: vi.fn().mockImplementation((key: string) => {
@@ -896,7 +896,7 @@ describe("sentryWebhook", () => {
 
     const response = await sentryWebhook(
       eventAlertRequest,
-      mockSlackWebhookUrl
+      mockSlackWebhookUrl,
     );
     expect(response.status).toBe(200);
 
@@ -918,7 +918,7 @@ describe("sentryWebhook", () => {
 
     const response = await sentryWebhook(
       noSignatureRequest,
-      mockSlackWebhookUrl
+      mockSlackWebhookUrl,
     );
     expect(response.status).toBe(200);
 
@@ -935,7 +935,7 @@ describe("sentryWebhook", () => {
 
     const response = await sentryWebhook(
       invalidJsonRequest,
-      mockSlackWebhookUrl
+      mockSlackWebhookUrl,
     );
     expect(response.status).toBe(500);
 

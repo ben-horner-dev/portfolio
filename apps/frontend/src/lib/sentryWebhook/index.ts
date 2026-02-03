@@ -23,12 +23,12 @@ import type { SentryAlert, SentryWebhookPayload, SlackMessage } from "./types";
 const logger = getLogger(
   "benhorner-sentry-webhook",
   USE_DEV_LOGGER_TO_AVOID_INFINTE_LOOP,
-  SERVER_LOGGER
+  SERVER_LOGGER,
 );
 
 export const sentryWebhook = async (
   request: NextRequest,
-  slackWebhookUrl?: string
+  slackWebhookUrl?: string,
 ) => {
   try {
     const body = await request.text();
@@ -60,7 +60,7 @@ export const sentryWebhook = async (
     const validatedSentryData = SentryAlertSchema.parse(sentryData);
     const slackMessage = formatSlackMessage(
       validatedSentryData,
-      webhookData.action
+      webhookData.action,
     );
 
     const validatedSlackMessage = SlackMessageSchema.parse(slackMessage);
@@ -81,7 +81,7 @@ export const sentryWebhook = async (
           error: error.message,
           timestamp: new Date().toISOString(),
         },
-        { status: error.status }
+        { status: error.status },
       );
     }
 
@@ -92,7 +92,7 @@ export const sentryWebhook = async (
           details: error.issues,
           timestamp: new Date().toISOString(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -101,7 +101,7 @@ export const sentryWebhook = async (
         error: "Internal server error",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -109,7 +109,7 @@ export const sentryWebhook = async (
 export const verifySignature = async (
   body: string,
   signature: string,
-  secret: string
+  secret: string,
 ): Promise<boolean> => {
   try {
     const encoder = new TextEncoder();
@@ -121,7 +121,7 @@ export const verifySignature = async (
       key,
       { name: "HMAC", hash: "SHA-256" },
       false,
-      ["sign"]
+      ["sign"],
     );
 
     const signatureBuffer = await crypto.subtle.sign("HMAC", cryptoKey, data);
@@ -144,7 +144,7 @@ export const parseWebhookPayload = (rawBody: string): SentryWebhookPayload => {
 
 export const extractSentryData = (
   webhookData: SentryWebhookPayload,
-  resource: string | null
+  resource: string | null,
 ): SentryAlert | null => {
   if (resource === "event_alert" && webhookData.data.event) {
     const event = webhookData.data.event;
@@ -216,7 +216,7 @@ export const extractSentryData = (
 };
 export const formatSlackMessage = (
   data: SentryAlert,
-  action?: string
+  action?: string,
 ): SlackMessage => {
   const severity = getSeverityEmoji(data.level);
   const environment = data.event.environment || "unknown";
@@ -319,7 +319,7 @@ const getSeverityEmoji = (level: string): string => {
 export const sendSlackMessage = async (
   webhookUrl: string,
   message: SlackMessage,
-  deps?: { fetchFn?: typeof fetch }
+  deps?: { fetchFn?: typeof fetch },
 ): Promise<void> => {
   const fetchFn = deps?.fetchFn ?? fetch;
   const response = await fetchFn(webhookUrl, {
