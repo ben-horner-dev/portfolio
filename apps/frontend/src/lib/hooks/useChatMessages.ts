@@ -1,5 +1,3 @@
-import { readStreamableValue } from "@ai-sdk/rsc";
-import { useCallback } from "react";
 import {
   checkDailyTokenCount,
   updateTokenCount,
@@ -13,9 +11,11 @@ import type {
 } from "@/lib/explore/types";
 import { getLogger } from "@/lib/logger";
 import { useChatStore } from "@/lib/stores/chatStore";
+import { readStreamableValue } from "@ai-sdk/rsc";
+import { useCallback } from "react";
 export const useChatMessages = (
   action: AgentServerAction,
-  messagesContainerRef?: React.RefObject<HTMLDivElement | null>,
+  messagesContainerRef?: React.RefObject<HTMLDivElement | null>
 ) => {
   const {
     messages,
@@ -75,11 +75,11 @@ export const useChatMessages = (
           message,
           config,
           messages,
-          String(chatId),
+          String(chatId)
         );
         let tokens = 0;
         for await (const streamIteration of readStreamableValue(
-          response,
+          response
         ) as AsyncIterable<AgentResponse>) {
           if (streamIteration?.error) {
             throw streamIteration.error;
@@ -131,7 +131,7 @@ export const useChatMessages = (
       config,
       action,
       messagesContainerRef,
-    ],
+    ]
   );
 
   return { messages, sendMessage };

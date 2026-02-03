@@ -1,6 +1,3 @@
-import { readStreamableValue } from "@ai-sdk/rsc";
-import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   checkDailyTokenCount,
   updateTokenCount,
@@ -8,6 +5,9 @@ import {
 import { InterlocutorType } from "@/lib/explore/constants";
 import { AgentGraphError } from "@/lib/explore/errors";
 import { useChatStore } from "@/lib/stores/chatStore";
+import { readStreamableValue } from "@ai-sdk/rsc";
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useChatMessages } from "./useChatMessages";
 
 vi.mock("@/lib/stores/chatStore");
@@ -102,7 +102,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("test message")).rejects.toThrow(
-      AgentGraphError,
+      AgentGraphError
     );
   });
 
@@ -120,7 +120,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("test message")).rejects.toThrow(
-      AgentGraphError,
+      AgentGraphError
     );
   });
 
@@ -128,7 +128,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("")).rejects.toThrow(
-      "Message input value is required",
+      "Message input value is required"
     );
   });
 
@@ -160,8 +160,83 @@ describe("useChatMessages", () => {
       "Hello",
       mockConfig,
       mockMessages,
-      "test-chat-id",
+      "test-chat-id"
     );
+  });
+
+  it("should handle streaming response with only courseLinks", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { courseLinks: ["link1", "link2"] };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    const mockStore = mockUseChatStore.mock.results[0].value;
+    expect(mockStore.updateMessage).toHaveBeenCalled();
+  });
+
+  it("should handle streaming response with only scratchPad", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { scratchPad: "thinking..." };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    const mockStore = mockUseChatStore.mock.results[0].value;
+    expect(mockStore.updateThoughts).toHaveBeenCalled();
+  });
+
+  it("should handle streaming response with only answer", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { answer: "The answer is 42" };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    const mockStore = mockUseChatStore.mock.results[0].value;
+    expect(mockStore.updateMessage).toHaveBeenCalled();
+  });
+
+  it("should handle streaming response with only totalTokens", async () => {
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { totalTokens: 50 };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    expect(mockUpdateTokenCount).toHaveBeenCalled();
   });
 
   it("should handle stream errors", async () => {
@@ -177,7 +252,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("Hello")).rejects.toThrow(
-      "Stream error",
+      "Stream error"
     );
   });
 
@@ -197,7 +272,7 @@ describe("useChatMessages", () => {
       expect.any(String),
       expect.objectContaining({
         content: "User facing error",
-      }),
+      })
     );
   });
 
@@ -210,7 +285,7 @@ describe("useChatMessages", () => {
     const messagesContainerRef = { current: mockContainer };
 
     const { result } = renderHook(() =>
-      useChatMessages(mockAction, messagesContainerRef),
+      useChatMessages(mockAction, messagesContainerRef)
     );
 
     await act(async () => {
@@ -218,7 +293,7 @@ describe("useChatMessages", () => {
     });
 
     expect(mockGetState().setScrollPosition).toHaveBeenCalledWith(
-      mockScrollTop,
+      mockScrollTop
     );
   });
 });

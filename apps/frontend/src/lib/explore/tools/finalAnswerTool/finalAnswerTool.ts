@@ -21,7 +21,7 @@ export const finalAnswerTool = tool(
     schema: FinalAnswerSchema,
   },
 );
-/* v8 ignore stop */
+/* v8 ignore stop -- @preserve */
 
 export const finalAnswer = async ({
   answer,

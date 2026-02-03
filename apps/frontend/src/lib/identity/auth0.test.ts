@@ -7,9 +7,9 @@ const mockGetDb = vi.fn();
 const mockLoggerError = vi.fn();
 
 vi.doMock("@auth0/nextjs-auth0/server", () => ({
-  Auth0Client: vi.fn().mockImplementation(() => ({
-    getSession: mockGetSession,
-  })),
+  Auth0Client: vi.fn().mockImplementation(function () {
+    return { getSession: mockGetSession };
+  }),
 }));
 
 vi.doMock("../db/commands/upsertUser", () => ({
@@ -94,7 +94,7 @@ describe("auth0", () => {
           email: "test@example.com",
           name: "Test User",
         },
-        mockDb,
+        mockDb
       );
       expect(mockClose).toHaveBeenCalledOnce();
     });
@@ -137,7 +137,7 @@ describe("auth0", () => {
       expect(mockGetSession).toHaveBeenCalledOnce();
       expect(mockLoggerError).toHaveBeenCalledWith(
         "Invalid session",
-        expect.any(Object),
+        expect.any(Object)
       );
       expect(mockGetDb).not.toHaveBeenCalled();
       expect(mockUpsertUser).not.toHaveBeenCalled();
@@ -220,7 +220,7 @@ describe("auth0", () => {
           email: "test@example.com",
           name: "Test User",
         },
-        mockDb,
+        mockDb
       );
       expect(mockClose).toHaveBeenCalledOnce();
     });
@@ -264,7 +264,7 @@ describe("auth0", () => {
           email: "test@example.com",
           name: undefined,
         },
-        mockDb,
+        mockDb
       );
       expect(mockClose).toHaveBeenCalledOnce();
     });

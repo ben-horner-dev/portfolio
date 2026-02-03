@@ -25,7 +25,9 @@ const mockLLM = {
 describe("Chat History Functions", () => {
   beforeEach(() => {
     vi.mocked(getCache).mockResolvedValue(mockCache);
-    vi.mocked(ChatOpenAI).mockImplementation(() => mockLLM);
+    vi.mocked(ChatOpenAI).mockImplementation(function () {
+      return mockLLM;
+    });
     mockLLM.invoke.mockResolvedValue({ content: "Mocked summary" });
   });
 
@@ -46,7 +48,7 @@ describe("Chat History Functions", () => {
       ]);
       expect(mockCache.set).toHaveBeenCalledWith(
         "chat_summary_chat123",
-        "Mocked summary",
+        "Mocked summary"
       );
     });
 
@@ -65,7 +67,7 @@ describe("Chat History Functions", () => {
       expect(mockLLM.invoke).toHaveBeenCalledWith([
         expect.objectContaining({
           content: expect.stringContaining(
-            "You are a helpful assistant that summarizes chat conversations",
+            "You are a helpful assistant that summarizes chat conversations"
           ),
         }),
         expect.objectContaining({
@@ -81,7 +83,7 @@ describe("Chat History Functions", () => {
 
       expect(mockCache.set).toHaveBeenCalledWith(
         "chat_summary_chat789",
-        "Mocked summary",
+        "Mocked summary"
       );
     });
 
@@ -111,10 +113,10 @@ describe("Chat History Functions", () => {
 
       expect(humanMessage).toBeInstanceOf(HumanMessage);
       expect(humanMessage.content).toContain(
-        "Please summarize the following chat conversation",
+        "Please summarize the following chat conversation"
       );
       expect(humanMessage.content).toContain(
-        "type:human, content: User says hi",
+        "type:human, content: User says hi"
       );
       expect(humanMessage.content).toContain("type:ai, content: AI says hello");
     });
@@ -153,7 +155,7 @@ describe("Chat History Functions", () => {
       mockCache.get.mockRejectedValue(new Error("Cache error"));
 
       await expect(
-        writeChatHistory("chat123", "AI response", "User message"),
+        writeChatHistory("chat123", "AI response", "User message")
       ).rejects.toThrow("Cache error");
     });
 
@@ -162,7 +164,7 @@ describe("Chat History Functions", () => {
       mockLLM.invoke.mockRejectedValue(new Error("LLM error"));
 
       await expect(
-        writeChatHistory("chat123", "AI response", "User message"),
+        writeChatHistory("chat123", "AI response", "User message")
       ).rejects.toThrow("LLM error");
     });
 
@@ -171,12 +173,12 @@ describe("Chat History Functions", () => {
       mockCache.set.mockRejectedValue(new Error("Cache set error"));
 
       await expect(
-        writeChatHistory("chat123", "AI response", "User message"),
+        writeChatHistory("chat123", "AI response", "User message")
       ).resolves.toBeUndefined();
 
       expect(mockCache.set).toHaveBeenCalledWith(
         "chat_summary_chat123",
-        "Mocked summary",
+        "Mocked summary"
       );
     });
 
@@ -184,7 +186,7 @@ describe("Chat History Functions", () => {
       mockCache.get.mockRejectedValue(new Error("Cache read error"));
 
       await expect(readCacheHistory("chat123")).rejects.toThrow(
-        "Cache read error",
+        "Cache read error"
       );
     });
   });
@@ -202,12 +204,12 @@ describe("Chat History Functions", () => {
       expect(mockCache.set).toHaveBeenNthCalledWith(
         1,
         "chat_summary_chat123",
-        "Mocked summary",
+        "Mocked summary"
       );
       expect(mockCache.set).toHaveBeenNthCalledWith(
         2,
         "chat_summary_chat123",
-        "Mocked summary",
+        "Mocked summary"
       );
     });
 
@@ -221,11 +223,11 @@ describe("Chat History Functions", () => {
       expect(mockCache.get).toHaveBeenCalledWith("chat_summary_chat2");
       expect(mockCache.set).toHaveBeenCalledWith(
         "chat_summary_chat1",
-        "Mocked summary",
+        "Mocked summary"
       );
       expect(mockCache.set).toHaveBeenCalledWith(
         "chat_summary_chat2",
-        "Mocked summary",
+        "Mocked summary"
       );
     });
   });

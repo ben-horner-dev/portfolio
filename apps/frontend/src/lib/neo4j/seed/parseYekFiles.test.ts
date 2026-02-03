@@ -39,7 +39,7 @@ describe("parseYekFiles", () => {
 
       expect(result).toEqual([]);
       expect(consoleSpy).toHaveBeenCalledWith(
-        "Missing txt file for project1.json, skipping...",
+        "Missing txt file for project1.json, skipping..."
       );
 
       consoleSpy.mockRestore();
@@ -234,7 +234,7 @@ more content
 
       const manyLinesContent = Array.from(
         { length: 50 },
-        (_, i) => `>>>> src/file${i}.ts\nconst x${i} = ${i};`,
+        (_, i) => `>>>> src/file${i}.ts\nconst x${i} = ${i};`
       ).join("\n\n");
 
       mockReaddirSync.mockReturnValue([
@@ -404,6 +404,66 @@ def helper_function():
 
       expect(chunkTypes).toContain("imports");
       expect(chunkTypes).toContain("class");
+      expect(chunkTypes).toContain("function");
+    });
+
+    it("should return code type for Python files without patterns", async () => {
+      const validMetadata = {
+        title: "Python Code Project",
+        description: "Python project with plain code",
+        completedDate: "2024-01-15",
+        role: "professional",
+      };
+
+      const txtContent = `>>>> src/constants.py
+DEBUG = True
+API_URL = "https://example.com"
+`;
+
+      mockReaddirSync.mockReturnValue([
+        "py-code.json",
+      ] as unknown as fs.Dirent[]);
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockImplementation((path: fs.PathOrFileDescriptor) => {
+        if (String(path).endsWith(".json")) {
+          return JSON.stringify(validMetadata);
+        }
+        return txtContent;
+      });
+
+      const result = await parseYekFiles();
+      const chunkTypes = result[0].codeChunks.map((c) => c.type);
+
+      expect(chunkTypes).toContain("code");
+    });
+
+    it("should handle Python async def functions", async () => {
+      const validMetadata = {
+        title: "Async Python Project",
+        description: "Python project with async",
+        completedDate: "2024-01-15",
+        role: "professional",
+      };
+
+      const txtContent = `>>>> src/async_utils.py
+async def fetch_data():
+    return await get_data()
+`;
+
+      mockReaddirSync.mockReturnValue([
+        "async-py.json",
+      ] as unknown as fs.Dirent[]);
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockImplementation((path: fs.PathOrFileDescriptor) => {
+        if (String(path).endsWith(".json")) {
+          return JSON.stringify(validMetadata);
+        }
+        return txtContent;
+      });
+
+      const result = await parseYekFiles();
+      const chunkTypes = result[0].codeChunks.map((c) => c.type);
+
       expect(chunkTypes).toContain("function");
     });
   });

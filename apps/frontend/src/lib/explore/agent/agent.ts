@@ -258,7 +258,7 @@ class AgentOrchestrator {
       };
     };
   }
-  /* v8 ignore stop */
+  /* v8 ignore stop -- @preserve */
 
   async createScratchpad(intermediateSteps: ExecutionStep[]): Promise<string> {
     const researchSteps: string[] = [];
@@ -635,7 +635,7 @@ function reduceToolResults(
 ): Partial<Record<ToolName, string>> {
   return { ...x, ...y };
 }
-/* v8 ignore stop */
+/* v8 ignore stop -- @preserve */
 
 export const formatChatHistory = async (
   chatHistory: ChatMessage[],

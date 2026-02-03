@@ -5,11 +5,13 @@ vi.mock("neogma", async () => {
   const actual = await vi.importActual("neogma");
   return {
     ...actual,
-    Neogma: vi.fn().mockImplementation(() => ({
-      driver: {
-        close: vi.fn().mockResolvedValue(undefined),
-      },
-    })),
+    Neogma: vi.fn().mockImplementation(function () {
+      return {
+        driver: {
+          close: vi.fn().mockResolvedValue(undefined),
+        },
+      };
+    }),
   };
 });
 
@@ -36,7 +38,7 @@ describe("neogma singleton", () => {
 
       expect(() => getNeogma()).toThrow(NeogmaError);
       expect(() => getNeogma()).toThrow(
-        "NEO4J_URI, NEO4J_USER, and NEO4J_PASS environment variables must be set",
+        "NEO4J_URI, NEO4J_USER, and NEO4J_PASS environment variables must be set"
       );
     });
 

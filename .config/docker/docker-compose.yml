@@ -19,19 +19,19 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - ../../volumes/backend-postgres:/var/lib/postgresql/data
+      - ../../volumes/backend-postgres:/var/lib/postgresql
     ports:
       - "5432:5432"
   neo4j:
     container_name: benhorner-dev-neo4j
     image: neo4j:latest
     volumes:
-        - ../../volumes/neo4j/logs:/logs
-        - ../../volumes/neo4j/config:/config
-        - ../../volumes/neo4j/data:/data
-        - ../../volumes/neo4j/plugins:/plugins
+      - ../../volumes/neo4j/logs:/logs
+      - ../../volumes/neo4j/config:/config
+      - ../../volumes/neo4j/data:/data
+      - ../../volumes/neo4j/plugins:/plugins
     environment:
-        - NEO4J_AUTH=neo4j/password
+      - NEO4J_AUTH=neo4j/password
     ports:
       - "7474:7474"
       - "7687:7687"
