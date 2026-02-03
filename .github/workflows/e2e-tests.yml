@@ -147,11 +147,8 @@ jobs:
           name: test-results
           path: ./apps/frontend/test-results
       - name: Run Chromatic (Playwright)
-        uses: chromaui/action@latest
-        with:
-          playwright: true
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_PLAYWRIGHT_TOKEN }}
-          workingDir: apps/frontend
+        run: bun x chromatic --playwright --project-token=${{ secrets.CHROMATIC_PROJECT_PLAYWRIGHT_TOKEN }}
+        working-directory: apps/frontend
 
       - name: Run Chromatic (Storybook)
         uses: chromaui/action@latest
