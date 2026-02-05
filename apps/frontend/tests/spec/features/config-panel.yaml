@@ -1,0 +1,31 @@
+feature: Config Panel
+
+background:
+  given:
+    - navigate_to_guest_mode
+    - chat_is_visible
+
+scenarios:
+  - name: Open config panel from chat
+    given: [config_panel_is_hidden]
+    when: [click_toggle_panels_button]
+    then: [config_panel_visible, evaluation_form_visible]
+
+  - name: Close config panel
+    given: [click_toggle_panels_button]
+    when: [click_toggle_panels_button]
+    then: [config_panel_hidden, evaluation_form_hidden]
+
+  - name: Save configuration shows success toast
+    given: [click_toggle_panels_button]
+    when: [click_save_button]
+    then: [toast_success_visible]
+    examples:
+      - expect: { toast: Configuration saved }
+
+  - name: Reset configuration shows info toast
+    given: [click_toggle_panels_button]
+    when: [click_reset_button]
+    then: [toast_info_visible]
+    examples:
+      - expect: { toast: Configuration reset }

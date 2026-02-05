@@ -1,0 +1,23 @@
+feature: LLM Configuration
+
+background:
+  given:
+    - navigate_to_guest_mode
+    - chat_is_visible
+    - click_toggle_panels_button
+
+scenarios:
+  - name: LLM is pre-selected from config
+    given: [config_panel_visible]
+    when: []
+    then: [llm_selected]
+    examples:
+      - desc: Mock LLM is selected
+        expect: { llm: mock }
+
+  - name: Save LLM configuration
+    given: [config_panel_visible]
+    when: [click_save_button]
+    then: [toast_success_visible]
+    examples:
+      - expect: { toast: Configuration saved }

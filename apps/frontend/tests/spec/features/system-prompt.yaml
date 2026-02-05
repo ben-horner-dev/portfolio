@@ -1,0 +1,41 @@
+feature: System Prompt
+
+background:
+  given:
+    - navigate_to_guest_mode
+    - chat_is_visible
+    - click_toggle_panels_button
+
+scenarios:
+  - name: System prompt shows default value from config
+    given: [config_panel_visible]
+    when: []
+    then: [system_prompt_contains]
+    examples:
+      - desc: Default prompt contains Ben persona
+        expect: { prompt_contains: You are Ben }
+
+  - name: Edit system prompt
+    given: [config_panel_visible]
+    when: [edit_system_prompt]
+    then: [system_prompt_updated]
+    examples:
+      - desc: Update prompt text
+        params: { prompt: You are a helpful assistant }
+        expect: { prompt: You are a helpful assistant }
+
+  - name: Save system prompt changes
+    given: [config_panel_visible]
+    when: [edit_system_prompt, click_save_button]
+    then: [toast_success_visible]
+    examples:
+      - params: { prompt: Custom system prompt }
+        expect: { toast: Configuration saved }
+
+  - name: Reset restores original system prompt
+    given: [config_panel_visible, edit_system_prompt]
+    when: [click_reset_button]
+    then: [toast_info_visible, system_prompt_contains]
+    examples:
+      - params: { prompt: Temporary prompt }
+        expect: { toast: Configuration reset, prompt_contains: You are Ben }

@@ -112,6 +112,33 @@
 				"OPENAI_API_KEY"
 			]
 		},
+		"test:e2e:spec": {
+			"env": [
+				"AUTH0_SECRET",
+				"APP_BASE_URL",
+				"AUTH0_CLIENT_ID",
+				"AUTH0_CLIENT_SECRET",
+				"AUTH0_SCOPE",
+				"AUTH0_DOMAIN",
+				"DATABASE_URL",
+				"AGENT_CONFIG_PATH",
+				"ALL_AGENT_CONFIG_PATH"
+			]
+		},
+		"test:e2e:spec:headed": {
+			"cache": false,
+			"env": [
+				"AUTH0_SECRET",
+				"APP_BASE_URL",
+				"AUTH0_CLIENT_ID",
+				"AUTH0_CLIENT_SECRET",
+				"AUTH0_SCOPE",
+				"AUTH0_DOMAIN",
+				"DATABASE_URL",
+				"AGENT_CONFIG_PATH",
+				"ALL_AGENT_CONFIG_PATH"
+			]
+		},
 		"lint": {},
 		"format": {},
 		"migrate": {

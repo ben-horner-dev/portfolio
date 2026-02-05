@@ -1,0 +1,16 @@
+feature: Theme Toggle
+
+background:
+  given:
+    - navigate_to_guest_mode
+
+scenarios:
+  - name: Toggle theme changes mode
+    given: []
+    when: [click_theme_toggle]
+    then: [theme_toggled]
+
+  - name: Toggle theme twice returns to original
+    given: []
+    when: [click_theme_toggle, click_theme_toggle]
+    then: [theme_toggled_back]
