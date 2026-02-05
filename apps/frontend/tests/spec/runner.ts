@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { test } from "@playwright/test";
+import { test } from "@chromatic-com/playwright";
 import { parse } from "yaml";
 import { autoValidate, type Example, steps, type TestContext } from "./steps";
 

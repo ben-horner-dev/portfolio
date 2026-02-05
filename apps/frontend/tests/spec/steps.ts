@@ -1,4 +1,5 @@
-import { expect, type Page } from "@playwright/test";
+import { expect } from "@chromatic-com/playwright";
+import type { Page } from "@playwright/test";
 
 export interface TestContext {
   id: string;

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { test } from "@playwright/test";
+import { test } from "@chromatic-com/playwright";
 import { runFeature } from "./runner";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
