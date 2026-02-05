@@ -153,6 +153,8 @@ export const seedTestFixtures = async (
       });
     }
 
+    const dummyEmbedding = new Array(1536).fill(0.1);
+
     for (const project of TEST_FIXTURES.projects) {
       await models.Project.createOne({
         id: project.id,
@@ -162,7 +164,7 @@ export const seedTestFixtures = async (
         completedDate: project.completedDate,
         complexity: project.complexity,
         fileCount: project.fileCount,
-        embedding: undefined,
+        embedding: dummyEmbedding,
       });
 
       for (const techName of project.technologies) {
@@ -221,7 +223,7 @@ export const seedTestFixtures = async (
         endDate: emp.endDate,
         isCurrent: emp.isCurrent,
         description: emp.description,
-        embedding: undefined,
+        embedding: dummyEmbedding,
       });
 
       for (const techName of emp.technologies) {
@@ -319,6 +321,22 @@ export const createTestIndexes = async (neogma: Neogma): Promise<void> => {
 			FOR (a:Achievement)
 			ON EACH [a.description]
 		`);
+
+    await session.run(`
+			CREATE VECTOR INDEX project_vec_idx IF NOT EXISTS
+			FOR (p:Project)
+			ON (p.embedding)
+			OPTIONS {indexConfig: {\`vector.dimensions\`: 1536, \`vector.similarity_function\`: 'cosine'}}
+		`);
+
+    await session.run(`
+			CREATE VECTOR INDEX employment_vec_idx IF NOT EXISTS
+			FOR (e:Employment)
+			ON (e.embedding)
+			OPTIONS {indexConfig: {\`vector.dimensions\`: 1536, \`vector.similarity_function\`: 'cosine'}}
+		`);
+
+    await session.run("CALL db.awaitIndexes(60)");
   } finally {
     await session.close();
   }

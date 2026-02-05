@@ -5,8 +5,11 @@ import {
   getCypherStrategy,
 } from "@/lib/explore/tools/graphSearchBase";
 import {
+  clearIntegrationTestDatabase,
   createIntegrationTestIndexes,
+  createMinimalTestFixtures,
   getTestNeogma,
+  seedIntegrationTestFixtures,
 } from "@/lib/explore/tools/graphSearchBase/__tests__/integration.fixtures";
 import { TOOL_NAME } from "./constants";
 import { RagGraphCypherSearchSchema } from "./schema";
@@ -44,7 +47,9 @@ vi.mock("@/lib/explore/tools/utils", () => ({
 describe("ragGraphCypherSearchTool Integration Tests", () => {
   beforeAll(async () => {
     testNeogma = getTestNeogma();
+    await clearIntegrationTestDatabase(testNeogma);
     await createIntegrationTestIndexes(testNeogma);
+    await seedIntegrationTestFixtures(testNeogma, createMinimalTestFixtures());
   });
 
   afterAll(async () => {

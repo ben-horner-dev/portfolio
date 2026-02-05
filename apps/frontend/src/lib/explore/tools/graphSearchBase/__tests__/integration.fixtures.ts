@@ -436,14 +436,15 @@ export async function seedIntegrationTestFixtures(
   fixtures: { nodes: Neo4jNode[]; relationships: Neo4jRelationship[] },
 ): Promise<void> {
   const session = neogma.driver.session();
+  const dummyEmbedding = new Array(1536).fill(0.1);
 
   try {
     for (const node of fixtures.nodes) {
       const labels = node.labels.join(":");
       const props = { ...node.properties };
 
-      if ("embedding" in props) {
-        delete props.embedding;
+      if (labels.includes("Project") || labels.includes("Employment")) {
+        props.embedding = dummyEmbedding;
       }
 
       await session.run(
@@ -514,6 +515,17 @@ export async function createIntegrationTestIndexes(
     ];
 
     for (const index of fulltextIndexes) {
+      try {
+        await session.run(index);
+      } catch {}
+    }
+
+    const vectorIndexes = [
+      `CREATE VECTOR INDEX project_vec_idx IF NOT EXISTS FOR (p:Project) ON (p.embedding) OPTIONS {indexConfig: {\`vector.dimensions\`: 1536, \`vector.similarity_function\`: 'cosine'}}`,
+      `CREATE VECTOR INDEX employment_vec_idx IF NOT EXISTS FOR (e:Employment) ON (e.embedding) OPTIONS {indexConfig: {\`vector.dimensions\`: 1536, \`vector.similarity_function\`: 'cosine'}}`,
+    ];
+
+    for (const index of vectorIndexes) {
       try {
         await session.run(index);
       } catch {}

@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - test-file: "home"
+          - test-file: "spec/example"
             needs-chromadb: false
             needs-backend: false
       fail-fast: false

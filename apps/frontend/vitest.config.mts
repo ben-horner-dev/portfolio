@@ -76,7 +76,22 @@ export default defineConfig({
         test: {
           name: "all",
           include: ["src/**/*.{test,spec}.{js,ts,jsx,tsx}"],
-          exclude: ["src/stories/**", "src/**/*.stories.{js,ts,jsx,tsx}"],
+          exclude: [
+            "src/stories/**",
+            "src/**/*.stories.{js,ts,jsx,tsx}",
+            "src/**/*.integration.spec.{js,ts,jsx,tsx}",
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          include: ["src/**/*.integration.spec.{js,ts,jsx,tsx}"],
+          fileParallelism: false,
+          sequence: {
+            concurrent: false,
+          },
         },
       },
     ],

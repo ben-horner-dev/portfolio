@@ -197,12 +197,10 @@ export function mergeSearchResults(
   }
 
   for (const result of graphResults) {
-    if (merged.has(result.id)) {
-      const existing = merged.get(result.id);
-      if (existing) {
-        existing.score += result.score;
-        existing.matchType = "hybrid";
-      }
+    const existing = merged.get(result.id);
+    if (existing) {
+      existing.score += result.score;
+      existing.matchType = "hybrid";
     } else {
       merged.set(result.id, {
         ...result,

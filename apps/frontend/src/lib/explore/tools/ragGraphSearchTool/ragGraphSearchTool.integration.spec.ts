@@ -2,8 +2,11 @@ import type { Neogma } from "neogma";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { CypherStrategyKey } from "@/lib/explore/tools/graphSearchBase";
 import {
+  clearIntegrationTestDatabase,
   createIntegrationTestIndexes,
+  createMinimalTestFixtures,
   getTestNeogma,
+  seedIntegrationTestFixtures,
 } from "@/lib/explore/tools/graphSearchBase/__tests__/integration.fixtures";
 import {
   AchievementKeywords,
@@ -50,7 +53,9 @@ vi.mock("@/lib/explore/tools/utils", () => ({
 describe("ragGraphSearchTool Integration Tests", () => {
   beforeAll(async () => {
     testNeogma = getTestNeogma();
+    await clearIntegrationTestDatabase(testNeogma);
     await createIntegrationTestIndexes(testNeogma);
+    await seedIntegrationTestFixtures(testNeogma, createMinimalTestFixtures());
   });
 
   afterAll(async () => {

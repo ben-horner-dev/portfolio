@@ -7,8 +7,11 @@ import {
   getCypherStrategy,
 } from "../cypherStrategies";
 import {
+  clearIntegrationTestDatabase,
   createIntegrationTestIndexes,
+  createMinimalTestFixtures,
   getTestNeogma,
+  seedIntegrationTestFixtures,
 } from "./integration.fixtures";
 
 describe("cypherStrategies Integration Tests", () => {
@@ -16,7 +19,9 @@ describe("cypherStrategies Integration Tests", () => {
 
   beforeAll(async () => {
     neogma = getTestNeogma();
+    await clearIntegrationTestDatabase(neogma);
     await createIntegrationTestIndexes(neogma);
+    await seedIntegrationTestFixtures(neogma, createMinimalTestFixtures());
   });
 
   afterAll(async () => {
@@ -625,9 +630,15 @@ describe("cypherStrategies Integration Tests", () => {
             n.completedDate AS completedDate,
             n.complexity AS complexity,
             n.fileCount AS fileCount,
+            n.liveUrl AS liveUrl,
+            n.githubUrl AS githubUrl,
             [] AS technologies,
             [] AS skills,
             [] AS patterns,
+            null AS company,
+            null AS position,
+            null AS achievements,
+            null AS codeSnippets,
             'project' AS resultType,
             1.0 AS score
           LIMIT 1`,
