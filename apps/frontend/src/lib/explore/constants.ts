@@ -3,6 +3,7 @@ import { Environment } from "@/lib/constants";
 export enum DeterministicAgentTrigger {
   ABORT = "__ABORT__",
   RAG_GRAPH_SEARCH = "__RAG_GRAPH_SEARCH__",
+  RAG_GRAPH_CYPHER_SEARCH = "__RAG_GRAPH_CYPHER_SEARCH__",
 }
 
 export enum ExecutionType {

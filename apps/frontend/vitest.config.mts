@@ -50,7 +50,6 @@ export default defineConfig({
         "src/components/organisms/chatWrapper/**",
         "src/lib/explore/graph/**",
         "src/lib/explore/llms/mockLLM/**",
-        "src/lib/explore/tools/ragGraphSearchTool/**",
         "src/lib/explore/maps.ts",
         "src/lib/explore/types.ts",
         "src/lib/explore/tools/mockRag/**",

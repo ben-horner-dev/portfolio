@@ -21,6 +21,7 @@ import type {
   ToolStateBinding,
 } from "@/lib/explore/types";
 import { mockRagGraphSearchTool } from "./tools/mockRag";
+import { ragGraphCypherSearchTool } from "./tools/ragGraphCypherSearchTool";
 
 export const AGENT_ERRORS = {
   parentError: AgentGraphError,
@@ -43,15 +44,25 @@ export const DEFAULT_TOOL_MAP: Record<ToolName, Tool> = {
   final_answer: finalAnswerTool,
   rag_graph_search: ragGraphSearchTool,
   mock_rag_graph_search: mockRagGraphSearchTool,
+  rag_graph_cypher_search: ragGraphCypherSearchTool,
 };
 
 export const DETERMINISTIC_TOOL_MAP: Record<DeterministicAgentTrigger, Tool> = {
   [DeterministicAgentTrigger.ABORT]: finalAnswerTool,
   [DeterministicAgentTrigger.RAG_GRAPH_SEARCH]: ragGraphSearchTool,
+  [DeterministicAgentTrigger.RAG_GRAPH_CYPHER_SEARCH]: ragGraphCypherSearchTool,
 };
 
 export const TOOL_STATE_BINDINGS: Record<string, ToolStateBinding> = {
   rag_graph_search: {
+    stateFields: [
+      ToolBindingKeys.TOP_K,
+      ToolBindingKeys.EMBEDDING_MODEL_NAME,
+      ToolBindingKeys.INDEX_NAME,
+      ToolBindingKeys.CHAT_ID,
+    ],
+  },
+  rag_graph_cypher_search: {
     stateFields: [
       ToolBindingKeys.TOP_K,
       ToolBindingKeys.EMBEDDING_MODEL_NAME,

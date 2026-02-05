@@ -15,6 +15,13 @@
       "when": 1756856364060,
       "tag": "0001_Add tokens and authId to users table",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770257200048,
+      "tag": "0002_update-eval-model",
+      "breakpoints": true
     }
   ]
 }

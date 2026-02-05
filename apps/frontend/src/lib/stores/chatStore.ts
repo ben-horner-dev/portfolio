@@ -8,6 +8,10 @@ interface ChatState {
   isTyping: boolean;
   sentMessageIds: Set<string>;
   thoughts: Record<string, string[]>; // messageId -> thoughts array
+  graphMermaid: string;
+  showPanels: boolean;
+  setShowPanels: (show: boolean) => void;
+  togglePanels: () => void;
   setInputValue: (value: string) => void;
   addMessages: (messages: ChatMessage[]) => void;
   setIsTyping: (typing: boolean) => void;
@@ -20,6 +24,7 @@ interface ChatState {
   isMessageSent: (id: string) => boolean;
   updateThoughts: (messageId: string, thoughts: string[]) => void;
   getThoughts: (messageId: string) => string[];
+  setGraphMermaid: (graph: string) => void;
   chatId: string | undefined;
   setChatId: (chatId: string) => void;
   config: AgentConfig | undefined;
@@ -53,6 +58,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isTyping: false,
   sentMessageIds: new Set<string>(),
   thoughts: {},
+  graphMermaid: "",
+  setGraphMermaid: (graph: string) => set({ graphMermaid: graph }),
+  showPanels: false,
+  setShowPanels: (show: boolean) => set({ showPanels: show }),
+  togglePanels: () => set((state) => ({ showPanels: !state.showPanels })),
   setInputValue: (value) => set({ inputValue: value }),
   addMessages: (message) =>
     set((state) => ({
@@ -67,6 +77,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       isTyping: false,
       sentMessageIds: new Set<string>(),
       thoughts: {},
+      graphMermaid: "",
     }),
   scrollPosition: 0,
   setScrollPosition: (position) => set({ scrollPosition: position }),

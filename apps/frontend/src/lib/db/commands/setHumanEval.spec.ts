@@ -36,11 +36,11 @@ describe("setHumanEval commands", () => {
       const evaluationData: DrizzleHumanEvaluationUpdateAll = {
         configId: "test-config-1",
         evaluatorId: "evaluator-123",
-        recommendationQuality: 4,
-        explanationClarity: 5,
-        relevanceToProfile: 3,
-        courseVariety: 4,
-        trustworthiness: 5,
+        informationAccuracy: 4,
+        responseHelpfulness: 5,
+        responseRelevance: 3,
+        responseCompleteness: 4,
+        conversationalQuality: 5,
         overallSatisfaction: 4,
       };
 
@@ -78,11 +78,11 @@ describe("setHumanEval commands", () => {
       const evaluationData: DrizzleHumanEvaluationUpdateAll = {
         configId: "test-config-1",
         evaluatorId: "evaluator-456",
-        recommendationQuality: 3,
-        explanationClarity: 4,
-        relevanceToProfile: 2,
-        courseVariety: 3,
-        trustworthiness: 4,
+        informationAccuracy: 3,
+        responseHelpfulness: 4,
+        responseRelevance: 2,
+        responseCompleteness: 3,
+        conversationalQuality: 4,
         overallSatisfaction: 3,
       };
 

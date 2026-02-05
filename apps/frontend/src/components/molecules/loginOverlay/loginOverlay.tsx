@@ -6,12 +6,14 @@ interface LoginOverlayProps {
   title: React.ReactElement<React.ComponentProps<typeof TypographyH2>>;
   description: React.ReactElement<React.ComponentProps<typeof TypographyP>>;
   loginButton: React.ReactElement<React.ComponentProps<typeof Button>>;
+  guestButton?: React.ReactElement<React.ComponentProps<typeof Button>>;
 }
 
 export function LoginOverlay({
   title,
   description,
   loginButton,
+  guestButton,
 }: LoginOverlayProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-background/5 backdrop-blur-[4px] rounded-2xl">
@@ -20,7 +22,15 @@ export function LoginOverlay({
           {title}
           {description}
         </div>
-        {loginButton}
+        <div className="flex flex-col gap-3">
+          {loginButton}
+          {guestButton && (
+            <>
+              <span className="text-muted-foreground text-sm">or</span>
+              {guestButton}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

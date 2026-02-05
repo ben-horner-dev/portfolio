@@ -1,8 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Suspense } from "react";
 import { LogoButton } from "@/components/atoms/logoButton";
 import { NavigationButton } from "@/components/atoms/navigationButton";
+import { Toaster } from "@/components/atoms/sonner";
+import { ThemeProvider } from "@/components/atoms/themeProvider";
+import { ThemeToggle } from "@/components/atoms/themeToggle";
+import { TooltipProvider } from "@/components/atoms/tooltip";
+import { DevToolbar } from "@/components/molecules/toolbar/Toolbar";
 import { Navigation } from "@/components/organisms/navigation";
 import { getContentConfig } from "@/lib/getContentConfig";
 import { auth0 } from "@/lib/identity/auth0";
@@ -53,13 +59,30 @@ export default async function RootLayout({
     />
   );
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${jetbrainsMono.variable} antialiased`}>
-        <Navigation
-          logoButton={logoButton}
-          navigationButtons={[...navigationButtons, loginButton]}
-        />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
+            <Navigation
+              logoButton={logoButton}
+              navigationButtons={[
+                ...navigationButtons,
+                loginButton,
+                <ThemeToggle key="theme-toggle" />,
+              ]}
+            />
+            {children}
+            <Suspense fallback={null}>
+              <DevToolbar />
+            </Suspense>
+            <Toaster position="bottom-right" />
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

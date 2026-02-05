@@ -41,6 +41,9 @@ export const ChatLoginOverlaySchema = z.object({
   loginButton: z.object({
     text: z.string(),
   }),
+  guestButton: z.object({
+    text: z.string(),
+  }),
 });
 
 export const ChatSchema = z.object({

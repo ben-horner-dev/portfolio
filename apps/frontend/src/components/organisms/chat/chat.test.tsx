@@ -1,12 +1,17 @@
 import type { StreamableValue } from "@ai-sdk/rsc";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
+import { TooltipProvider } from "@/components/atoms/tooltip";
 import { Chat } from "@/components/organisms/chat";
 import type {
   AgentResponse,
   AgentServerAction,
   ChatMessage,
 } from "@/lib/explore/types";
+
+const renderWithTooltipProvider = (ui: React.ReactElement) => {
+  return render(<TooltipProvider>{ui}</TooltipProvider>);
+};
 
 vi.useFakeTimers();
 
@@ -30,6 +35,9 @@ vi.mock("@/lib/stores/chatStore", () => ({
     markMessageAsSent: vi.fn(),
     isMessageSent: vi.fn(() => false),
     getThoughts: vi.fn(() => []),
+    thoughts: [],
+    showPanels: false,
+    togglePanels: vi.fn(),
   })),
 }));
 
@@ -75,7 +83,7 @@ const mockAction: AgentServerAction = () =>
   } as StreamableValue<AgentResponse>);
 
 it("Chat renders header", () => {
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -90,7 +98,7 @@ it("Chat renders header", () => {
 });
 
 it("Chat renders input with default placeholder", () => {
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -113,7 +121,7 @@ it("Chat renders input with typing placeholder when isTyping is true", async () 
     handleSend: vi.fn(() => true),
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -168,7 +176,7 @@ it("Chat renders messages when messages exist", async () => {
     getThoughts: vi.fn(() => []),
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -214,7 +222,7 @@ it("Chat handles quick reply click", async () => {
     thoughts: [],
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -249,7 +257,7 @@ it("Chat handles Enter key press when not typing", async () => {
     sendMessage: mockSendMessage,
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -285,7 +293,7 @@ it("Chat does not handle Enter key press when typing", async () => {
     sendMessage: mockSendMessage,
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -322,7 +330,7 @@ it("Chat handles non-Enter key press", async () => {
     sendMessage: mockSendMessage,
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -359,7 +367,7 @@ it("Chat handles send button click", async () => {
     sendMessage: mockSendMessage,
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -396,7 +404,7 @@ it("Chat handles send button click when handleSend returns false", async () => {
     sendMessage: mockSendMessage,
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -432,7 +440,7 @@ it("Chat shows typing indicator when isTyping is true and no messages", async ()
     sendMessage: vi.fn(),
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -457,7 +465,7 @@ it("Chat handles input change", async () => {
     handleSend: vi.fn(() => true),
   });
 
-  render(
+  renderWithTooltipProvider(
     <Chat
       header={mockHeader}
       placeholderTexts={{
@@ -502,30 +510,131 @@ it("Chat clears scroll timeout on multiple renders", async () => {
     getThoughts: vi.fn(() => []),
     scrollPosition: 100,
     thoughts: [],
+    showPanels: false,
+    togglePanels: vi.fn(),
   });
 
   const { rerender } = render(
-    <Chat
-      header={mockHeader}
-      placeholderTexts={{
-        default: "Type a message",
-        typing: "AI is typing...",
-      }}
-      action={mockAction}
-    />,
+    <TooltipProvider>
+      <Chat
+        header={mockHeader}
+        placeholderTexts={{
+          default: "Type a message",
+          typing: "AI is typing...",
+        }}
+        action={mockAction}
+      />
+    </TooltipProvider>,
   );
 
   rerender(
-    <Chat
-      header={mockHeader}
-      placeholderTexts={{
-        default: "Type a message",
-        typing: "AI is typing...",
-      }}
-      action={mockAction}
-    />,
+    <TooltipProvider>
+      <Chat
+        header={mockHeader}
+        placeholderTexts={{
+          default: "Type a message",
+          typing: "AI is typing...",
+        }}
+        action={mockAction}
+      />
+    </TooltipProvider>,
   );
 
   clearTimeoutSpy.mockRestore();
   setTimeoutSpy.mockRestore();
+});
+
+it("Chat renders toggle panels button with Show panels label when panels hidden", async () => {
+  const mockTogglePanels = vi.fn();
+  const { useChatStore } = await import("@/lib/stores/chatStore");
+
+  vi.mocked(useChatStore).mockReturnValue({
+    quickReplies: [],
+    setQuickReplies: vi.fn(),
+    addMessages: vi.fn(),
+    markMessageAsSent: vi.fn(),
+    isMessageSent: vi.fn(() => false),
+    getThoughts: vi.fn(() => []),
+    thoughts: [],
+    showPanels: false,
+    togglePanels: mockTogglePanels,
+  });
+
+  renderWithTooltipProvider(
+    <Chat
+      header={mockHeader}
+      placeholderTexts={{
+        default: "Type a message",
+        typing: "AI is typing...",
+      }}
+      action={mockAction}
+    />,
+  );
+
+  const toggleButton = screen.getByRole("button", { name: "Show panels" });
+  expect(toggleButton).toBeInTheDocument();
+});
+
+it("Chat renders toggle panels button with Hide panels label when panels visible", async () => {
+  const mockTogglePanels = vi.fn();
+  const { useChatStore } = await import("@/lib/stores/chatStore");
+
+  vi.mocked(useChatStore).mockReturnValue({
+    quickReplies: [],
+    setQuickReplies: vi.fn(),
+    addMessages: vi.fn(),
+    markMessageAsSent: vi.fn(),
+    isMessageSent: vi.fn(() => false),
+    getThoughts: vi.fn(() => []),
+    thoughts: [],
+    showPanels: true,
+    togglePanels: mockTogglePanels,
+  });
+
+  renderWithTooltipProvider(
+    <Chat
+      header={mockHeader}
+      placeholderTexts={{
+        default: "Type a message",
+        typing: "AI is typing...",
+      }}
+      action={mockAction}
+    />,
+  );
+
+  const toggleButton = screen.getByRole("button", { name: "Hide panels" });
+  expect(toggleButton).toBeInTheDocument();
+});
+
+it("Chat calls togglePanels when toggle button is clicked", async () => {
+  const mockTogglePanels = vi.fn();
+  const { useChatStore } = await import("@/lib/stores/chatStore");
+
+  vi.mocked(useChatStore).mockReturnValue({
+    quickReplies: [],
+    setQuickReplies: vi.fn(),
+    addMessages: vi.fn(),
+    markMessageAsSent: vi.fn(),
+    isMessageSent: vi.fn(() => false),
+    getThoughts: vi.fn(() => []),
+    thoughts: [],
+    showPanels: false,
+    togglePanels: mockTogglePanels,
+  });
+
+  renderWithTooltipProvider(
+    <Chat
+      header={mockHeader}
+      placeholderTexts={{
+        default: "Type a message",
+        typing: "AI is typing...",
+      }}
+      action={mockAction}
+    />,
+  );
+
+  const toggleButton = screen.getByRole("button", { name: "Show panels" });
+  fireEvent.click(toggleButton);
+
+  expect(mockTogglePanels).toHaveBeenCalled();
 });

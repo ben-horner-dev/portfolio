@@ -12,13 +12,13 @@
   ],
   "tools": [
     {
-      "name": "rag_graph_search",
+      "name": "rag_graph_cypher_search",
       "description": "Searches graphed and indexed course data using natural language queries. Returns relevant courses with metadata like provider, content type, similarity scores, and delivery information."
     }
   ],
   "initialTools": [
     {
-      "name": "rag_graph_search",
+      "name": "rag_graph_cypher_search",
       "description": "Searches graphed and indexed course data using natural language queries. Returns relevant courses with metadata like provider, content type, similarity scores, and delivery information."
     }
   ],

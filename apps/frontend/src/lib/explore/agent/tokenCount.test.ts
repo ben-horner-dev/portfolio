@@ -15,7 +15,6 @@ import { upsertUser } from "@/lib/db/commands/upsertUser";
 import { getUserByAuthId } from "@/lib/db/queries/getUser";
 import type { User } from "@/lib/db/types";
 import { getDb } from "@/lib/db/utils";
-import { UserFacingErrors } from "@/lib/errors";
 import { AgentGraphError } from "@/lib/explore/errors";
 import { checkDailyTokenCount, updateTokenCount } from "./tokenCount";
 
@@ -41,12 +40,32 @@ describe("tokenCount", () => {
   });
 
   describe("checkDailyTokenCount", () => {
+    it("returns success with guest user for guest chatId without database check", async () => {
+      const result = await checkDailyTokenCount("guest");
+
+      expect(result).toEqual({
+        success: true,
+        user: {
+          id: "00000000-0000-0000-0000-000000000000",
+          authId: "guest",
+          email: "guest@example.com",
+          name: "Guest User",
+          tokens: 0,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+        },
+        isGuest: true,
+      });
+      expect(mockGetDb).not.toHaveBeenCalled();
+      expect(mockGetUserByAuthId).not.toHaveBeenCalled();
+    });
+
     it("throws error when DATABASE_URL is not set", async () => {
       const originalEnv = process.env.DATABASE_URL;
       delete process.env.DATABASE_URL;
 
       await expect(checkDailyTokenCount("user123")).rejects.toThrow(
-        new AgentGraphError("DATABASE_URL is not set"),
+        new AgentGraphError("DATABASE_URL is not set")
       );
 
       process.env.DATABASE_URL = originalEnv;
@@ -58,14 +77,14 @@ describe("tokenCount", () => {
 
       await expect(checkDailyTokenCount("user123")).rejects.toThrow(
         new AgentGraphError(
-          "User not found, only authenticated users can use the chat",
-        ),
+          "User not found, only authenticated users can use the chat"
+        )
       );
 
       expect(mockClose).toHaveBeenCalled();
     });
 
-    it("returns user when tokens are below limit", async () => {
+    it("returns success with user when tokens are below limit", async () => {
       process.env.DATABASE_URL = "test-url";
       const mockUser: User = {
         id: "1",
@@ -80,11 +99,11 @@ describe("tokenCount", () => {
 
       const result = await checkDailyTokenCount("user123");
 
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual({ success: true, user: mockUser });
       expect(mockClose).toHaveBeenCalled();
     });
 
-    it("resets tokens and returns user when last updated is not today", async () => {
+    it("resets tokens and returns success with user when last updated is not today", async () => {
       process.env.DATABASE_URL = "test-url";
       const yesterday = new Date(Date.now() - 25 * 60 * 60 * 1000); // 25 hours ago
 
@@ -105,13 +124,13 @@ describe("tokenCount", () => {
 
       expect(mockUpsertUser).toHaveBeenCalledWith(
         { ...mockUser, tokens: 0 },
-        mockDb as never,
+        mockDb as never
       );
-      expect(result).toEqual(updatedMockUser);
+      expect(result).toEqual({ success: true, user: updatedMockUser });
       expect(mockClose).toHaveBeenCalled();
     });
 
-    it("throws UserFacingErrors when token limit reached today", async () => {
+    it("returns error when token limit reached today", async () => {
       process.env.DATABASE_URL = "test-url";
       const today = new Date();
       const DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -128,11 +147,14 @@ describe("tokenCount", () => {
       };
       mockGetUserByAuthId.mockResolvedValue(mockUser);
 
-      await expect(checkDailyTokenCount("user123")).rejects.toThrow(
-        new UserFacingErrors(
-          `You have reached the token limit for today: ${mockUser.tokens}, please try again on ${oneDayAfterToday.toLocaleDateString()} at ${oneDayAfterToday.toLocaleTimeString()}`,
-        ),
-      );
+      const result = await checkDailyTokenCount("user123");
+
+      expect(result).toEqual({
+        success: false,
+        error: `You have reached the token limit for today: ${
+          mockUser.tokens
+        }, please try again on ${oneDayAfterToday.toLocaleDateString()} at ${oneDayAfterToday.toLocaleTimeString()}`,
+      });
 
       expect(mockClose).toHaveBeenCalled();
     });
@@ -142,7 +164,7 @@ describe("tokenCount", () => {
       mockGetUserByAuthId.mockRejectedValue(new Error("Database error"));
 
       await expect(checkDailyTokenCount("user123")).rejects.toThrow(
-        "Database error",
+        "Database error"
       );
       expect(mockClose).toHaveBeenCalled();
     });
@@ -164,7 +186,7 @@ describe("tokenCount", () => {
       };
 
       await expect(updateTokenCount(mockUser, 5)).rejects.toThrow(
-        new AgentGraphError("DATABASE_URL is not set"),
+        new AgentGraphError("DATABASE_URL is not set")
       );
 
       process.env.DATABASE_URL = originalEnv;
@@ -188,7 +210,7 @@ describe("tokenCount", () => {
 
       expect(mockUpsertUser).toHaveBeenCalledWith(
         { ...mockUser, tokens: 15 },
-        mockDb as never,
+        mockDb as never
       );
       expect(result).toEqual(updatedUser);
       expect(mockClose).toHaveBeenCalled();
@@ -208,7 +230,7 @@ describe("tokenCount", () => {
       mockUpsertUser.mockRejectedValue(new Error("Database error"));
 
       await expect(updateTokenCount(mockUser, 5)).rejects.toThrow(
-        "Database error",
+        "Database error"
       );
       expect(mockClose).toHaveBeenCalled();
     });

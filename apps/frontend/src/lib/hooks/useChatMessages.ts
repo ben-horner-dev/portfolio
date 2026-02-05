@@ -1,5 +1,3 @@
-import { readStreamableValue } from "@ai-sdk/rsc";
-import { useCallback } from "react";
 import {
   checkDailyTokenCount,
   updateTokenCount,
@@ -13,15 +11,18 @@ import type {
 } from "@/lib/explore/types";
 import { getLogger } from "@/lib/logger";
 import { useChatStore } from "@/lib/stores/chatStore";
+import { readStreamableValue } from "@ai-sdk/rsc";
+import { useCallback } from "react";
 export const useChatMessages = (
   action: AgentServerAction,
-  messagesContainerRef?: React.RefObject<HTMLDivElement | null>,
+  messagesContainerRef?: React.RefObject<HTMLDivElement | null>
 ) => {
   const {
     messages,
     setIsTyping,
     updateMessage,
     updateThoughts,
+    setGraphMermaid,
     chatId,
     config,
   } = useChatStore();
@@ -63,7 +64,13 @@ export const useChatMessages = (
           scrollPosition: messagesContainerRef?.current?.scrollTop || 0,
         });
 
-        const user = await checkDailyTokenCount(chatId);
+        const tokenCheckResult = await checkDailyTokenCount(chatId);
+        if (!tokenCheckResult.success) {
+          throw new AgentGraphError(tokenCheckResult.error);
+        }
+        const user = tokenCheckResult.user;
+        const isGuest = tokenCheckResult.isGuest ?? false;
+
         if (messagesContainerRef?.current) {
           const { setScrollPosition } = useChatStore.getState();
           setScrollPosition(messagesContainerRef.current.scrollTop);
@@ -75,11 +82,11 @@ export const useChatMessages = (
           message,
           config,
           messages,
-          String(chatId),
+          String(chatId)
         );
         let tokens = 0;
         for await (const streamIteration of readStreamableValue(
-          response,
+          response
         ) as AsyncIterable<AgentResponse>) {
           if (streamIteration?.error) {
             throw streamIteration.error;
@@ -98,28 +105,38 @@ export const useChatMessages = (
           if (streamIteration?.totalTokens) {
             tokens += streamIteration.totalTokens;
           }
+          if (streamIteration?.graphMermaid) {
+            setGraphMermaid(streamIteration.graphMermaid);
+          }
           updateMessage(newMessage.id, {
             ...newMessage,
           });
         }
         setIsTyping(false);
-        await updateTokenCount(user, tokens);
+        if (!isGuest) {
+          await updateTokenCount(user, tokens);
+        }
       } catch (error) {
         logger.error(error);
         setIsTyping(false);
+
+        const isUserFacingError =
+          error instanceof AgentGraphError ||
+          (error as Error)?.name.includes("UserFacingErrors");
+
+        if (isUserFacingError) {
+          updateMessage(newMessage.id, {
+            ...newMessage,
+            content: (error as Error).message,
+          });
+          return;
+        }
+
         updateMessage(newMessage.id, {
           ...newMessage,
           content: "Oops, something went wrong. Please try again.",
         });
-        if ((error as Error)?.name.includes("UserFacingErrors")) {
-          newMessage.content = (error as Error).message;
-          updateMessage(newMessage.id, {
-            ...newMessage,
-          });
-          return;
-        } else {
-          throw error;
-        }
+        throw error;
       }
     },
     [
@@ -127,11 +144,12 @@ export const useChatMessages = (
       setIsTyping,
       updateMessage,
       updateThoughts,
+      setGraphMermaid,
       chatId,
       config,
       action,
       messagesContainerRef,
-    ],
+    ]
   );
 
   return { messages, sendMessage };

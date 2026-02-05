@@ -5,12 +5,31 @@ import { upsertUser } from "@/lib/db/commands/upsertUser";
 import { getUserByAuthId } from "@/lib/db/queries/getUser";
 import type { User } from "@/lib/db/types";
 import { getDb } from "@/lib/db/utils";
-import { UserFacingErrors } from "@/lib/errors";
 import { AgentGraphError } from "@/lib/explore/errors";
 
+export type TokenCheckResult =
+  | { success: true; user: User; isGuest?: boolean }
+  | { success: false; error: string };
+
+const GUEST_USER_ID = "guest";
+
+const createGuestUser = (): User => ({
+  id: "00000000-0000-0000-0000-000000000000",
+  authId: GUEST_USER_ID,
+  email: "guest@example.com",
+  name: "Guest User",
+  tokens: 0,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
 export const checkDailyTokenCount = async (
-  userAuthId: string,
-): Promise<User> => {
+  userAuthId: string
+): Promise<TokenCheckResult> => {
+  if (userAuthId === GUEST_USER_ID) {
+    return { success: true, user: createGuestUser(), isGuest: true };
+  }
+
   const uri = process.env.DATABASE_URL;
   if (!uri) {
     throw new AgentGraphError("DATABASE_URL is not set");
@@ -20,11 +39,11 @@ export const checkDailyTokenCount = async (
     const user = await getUserByAuthId(userAuthId, db);
     if (!user) {
       throw new AgentGraphError(
-        "User not found, only authenticated users can use the chat",
+        "User not found, only authenticated users can use the chat"
       );
     }
     if (user.tokens < TOKEN_LIMIT) {
-      return user;
+      return { success: true, user };
     }
     const lastUpdated = user.updatedAt;
     const DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -33,14 +52,17 @@ export const checkDailyTokenCount = async (
 
     if (isLastUpdatedMoreThan24HrsAgo) {
       const updatedUser = await upsertUser({ ...user, tokens: 0 }, db);
-      return updatedUser;
+      return { success: true, user: updatedUser };
     }
 
     const oneDayAfterLastUpdated = new Date(lastUpdated.getTime() + DAY_IN_MS);
 
-    throw new UserFacingErrors(
-      `You have reached the token limit for today: ${user.tokens}, please try again on ${oneDayAfterLastUpdated.toLocaleDateString()} at ${oneDayAfterLastUpdated.toLocaleTimeString()}`,
-    );
+    return {
+      success: false,
+      error: `You have reached the token limit for today: ${
+        user.tokens
+      }, please try again on ${oneDayAfterLastUpdated.toLocaleDateString()} at ${oneDayAfterLastUpdated.toLocaleTimeString()}`,
+    };
   } finally {
     await close();
   }
@@ -48,7 +70,7 @@ export const checkDailyTokenCount = async (
 
 export const updateTokenCount = async (
   user: User,
-  tokens: number,
+  tokens: number
 ): Promise<User> => {
   const uri = process.env.DATABASE_URL;
   if (!uri) {
@@ -58,7 +80,7 @@ export const updateTokenCount = async (
   try {
     const updatedUser = await upsertUser(
       { ...user, tokens: user.tokens + tokens },
-      db,
+      db
     );
     return updatedUser;
   } finally {
