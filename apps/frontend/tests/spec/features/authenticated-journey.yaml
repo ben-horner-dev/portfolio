@@ -40,8 +40,8 @@ scenarios:
       - typing_indicator_visible
       - ai_response_received
     examples:
-      - params: { message: Hello, this is a test message }
-        expect: { message: Hello, this is a test message }
+      - params: { message: "Hello, this is a test message" }
+        expect: { message: "Hello, this is a test message" }
 
   - name: User can use quick replies
     given:
@@ -58,7 +58,7 @@ scenarios:
     then:
       - typing_indicator_visible
     examples:
-      - params: { message: Hello, this is a test message }
+      - params: { message: "Hello, this is a test message" }
 
   - name: User can send message with Enter key
     given:
