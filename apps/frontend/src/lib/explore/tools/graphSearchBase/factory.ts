@@ -22,8 +22,8 @@ export interface GraphRagToolConfig<
   description: string;
   schema: z.ZodSchema<TInput>;
   selectCypher: (input: TInput) => CypherSelection;
-  getTopK?: (input: TInput) => number;
-  getVectorSearchOptions?: (input: TInput) => VectorSearchOptions;
+  getTopK?: (input: TInput) => number | undefined;
+  getVectorSearchOptions?: (input: TInput) => VectorSearchOptions | undefined;
 }
 
 const DEFAULT_TOP_K = 10;
