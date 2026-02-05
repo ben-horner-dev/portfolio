@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Page } from "@playwright/test";
 
 export interface TestContext {
   id: string;
@@ -20,17 +20,17 @@ export type StepFn = (
 ) => Promise<void>;
 
 export const navigate_to_home: StepFn = async (page) => {
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
 };
 
 export const navigate_to_guest_mode: StepFn = async (page) => {
-  await page.goto('/?guest=true#explore');
-  await page.waitForLoadState('networkidle');
+  await page.goto("/?guest=true#explore");
+  await page.waitForLoadState("networkidle");
 };
 
 export const chat_is_visible: StepFn = async (page) => {
-  await expect(page.locator('#explore')).toBeVisible();
+  await expect(page.locator("#explore")).toBeVisible();
 };
 
 export const config_panel_is_hidden: StepFn = async (page) => {
@@ -44,7 +44,7 @@ export const click_toggle_panels_button: StepFn = async (page) => {
 };
 
 export const config_panel_visible: StepFn = async (page) => {
-  await expect(page.getByText('Agent Configuration')).toBeVisible();
+  await expect(page.getByText("Agent Configuration")).toBeVisible();
 };
 
 export const config_panel_hidden: StepFn = async (page) => {
@@ -63,8 +63,8 @@ export const evaluation_form_hidden: StepFn = async (page) => {
 
 export const select_llm: StepFn = async (page, ctx, example) => {
   const llmSelect = page.locator('select[title="Select an LLM"]');
-  const llmName = (example.params?.llm as string) ?? 'openai';
-  const options = llmSelect.locator('option');
+  const llmName = (example.params?.llm as string) ?? "openai";
+  const options = llmSelect.locator("option");
   const count = await options.count();
   for (let i = 0; i < count; i++) {
     const optionText = await options.nth(i).textContent();
@@ -79,8 +79,8 @@ export const select_llm: StepFn = async (page, ctx, example) => {
 export const llm_selected: StepFn = async (page, ctx, example) => {
   const llmSelect = page.locator('select[title="Select an LLM"]');
   const expectedLLM = (example.expect?.llm as string) ?? ctx.selectedLLM;
-  const selectedOption = llmSelect.locator('option:checked');
-  await expect(selectedOption).toContainText(expectedLLM ?? '', {
+  const selectedOption = llmSelect.locator("option:checked");
+  await expect(selectedOption).toContainText(expectedLLM ?? "", {
     ignoreCase: true,
   });
 };
@@ -89,8 +89,7 @@ export const edit_system_prompt: StepFn = async (page, _ctx, example) => {
   const promptTextarea = page
     .locator('textarea[placeholder="Enter system prompt..."]')
     .first();
-  const promptText =
-    (example.params?.prompt as string) ?? 'Test system prompt';
+  const promptText = (example.params?.prompt as string) ?? "Test system prompt";
   await promptTextarea.fill(promptText);
 };
 
@@ -116,7 +115,7 @@ export const system_prompt_contains: StepFn = async (page, _ctx, example) => {
 
 export const add_tool: StepFn = async (page, ctx, example) => {
   const toolSelect = page.locator('select[title="Add a tool"]').first();
-  const toolName = (example.params?.tool as string) ?? '';
+  const toolName = (example.params?.tool as string) ?? "";
   await toolSelect.selectOption(toolName);
   ctx.selectedTool = toolName;
 };
@@ -131,16 +130,18 @@ export const remove_tool: StepFn = async (page, _ctx, example) => {
 
 export const tool_in_selected_list: StepFn = async (page, ctx, example) => {
   const toolName = (example.expect?.tool as string) ?? ctx.selectedTool;
-  const toolBadge = page.locator(
-    `span.inline-flex:has-text("${toolName}")`,
-  );
+  const toolBadge = page.locator(`span.inline-flex:has-text("${toolName}")`);
   await expect(toolBadge.first()).toBeVisible();
 };
 
-export const tool_not_in_selected_list: StepFn = async (page, _ctx, example) => {
+export const tool_not_in_selected_list: StepFn = async (
+  page,
+  _ctx,
+  example,
+) => {
   const toolName = example.expect?.tool as string;
   const toolsSection = page
-    .locator('div')
+    .locator("div")
     .filter({ hasText: /^Tools$/ })
     .first();
   await expect(toolsSection).toBeVisible();
@@ -161,14 +162,14 @@ export const click_reset_button: StepFn = async (page) => {
 };
 
 export const toast_success_visible: StepFn = async (page, _ctx, example) => {
-  const message = (example.expect?.toast as string) ?? 'saved';
+  const message = (example.expect?.toast as string) ?? "saved";
   await expect(page.locator(`text=${message}`).first()).toBeVisible({
     timeout: 5000,
   });
 };
 
 export const toast_info_visible: StepFn = async (page, _ctx, example) => {
-  const message = (example.expect?.toast as string) ?? 'reset';
+  const message = (example.expect?.toast as string) ?? "reset";
   await expect(page.locator(`text=${message}`).first()).toBeVisible({
     timeout: 5000,
   });
@@ -182,12 +183,11 @@ export const set_evaluation_field: StepFn = async (page, _ctx, example) => {
     .locator('[data-slot="evaluation-field"]')
     .filter({ hasText: fieldLabel })
     .first();
-  await fieldContainer.waitFor({ state: 'visible' });
+  await fieldContainer.waitFor({ state: "visible" });
   const slider = fieldContainer.locator('[data-slot="slider"]');
   const sliderBox = await slider.boundingBox();
-  if (!sliderBox) throw new Error('Slider not found');
-  const targetX =
-    sliderBox.x + (sliderBox.width * (value - 1)) / (max - 1);
+  if (!sliderBox) throw new Error("Slider not found");
+  const targetX = sliderBox.x + (sliderBox.width * (value - 1)) / (max - 1);
   const targetY = sliderBox.y + sliderBox.height / 2;
   await page.mouse.click(targetX, targetY);
 };
@@ -199,46 +199,48 @@ export const click_save_evaluation: StepFn = async (page) => {
 
 export const evaluation_save_status: StepFn = async (page, _ctx, example) => {
   const status = example.expect?.status as string;
-  if (status === 'success') {
-    await expect(page.locator('text=Saved').first()).toBeVisible({
+  if (status === "success") {
+    await expect(page.locator("text=Saved").first()).toBeVisible({
       timeout: 5000,
     });
-  } else if (status === 'error') {
-    await expect(page.locator('text=Error').first()).toBeVisible({
+  } else if (status === "error") {
+    await expect(page.locator("text=Error").first()).toBeVisible({
       timeout: 5000,
     });
   }
 };
 
 export const click_theme_toggle: StepFn = async (page) => {
-  const themeButton = page.locator('button:has(svg.lucide-sun, svg.lucide-moon)');
+  const themeButton = page.locator(
+    "button:has(svg.lucide-sun, svg.lucide-moon)",
+  );
   await themeButton.click();
 };
 
 export const theme_is_dark: StepFn = async (page) => {
-  await expect(page.locator('html')).toHaveClass(/dark/);
+  await expect(page.locator("html")).toHaveClass(/dark/);
 };
 
 export const theme_is_light: StepFn = async (page) => {
-  await expect(page.locator('html')).not.toHaveClass(/dark/);
+  await expect(page.locator("html")).not.toHaveClass(/dark/);
 };
 
 export const theme_toggled: StepFn = async (page) => {
   const themeButton = page.locator(
-    'button:has(svg.lucide-sun, svg.lucide-moon)',
+    "button:has(svg.lucide-sun, svg.lucide-moon)",
   );
   await expect(themeButton).toBeVisible();
 };
 
 export const theme_toggled_back: StepFn = async (page) => {
   const themeButton = page.locator(
-    'button:has(svg.lucide-sun, svg.lucide-moon)',
+    "button:has(svg.lucide-sun, svg.lucide-moon)",
   );
   await expect(themeButton).toBeVisible();
 };
 
 export const login_overlay_visible: StepFn = async (page) => {
-  await expect(page.locator('text=Login').first()).toBeVisible();
+  await expect(page.locator("text=Login").first()).toBeVisible();
 };
 
 export const guest_button_visible: StepFn = async (page) => {
@@ -248,7 +250,7 @@ export const guest_button_visible: StepFn = async (page) => {
 export const click_guest_button: StepFn = async (page) => {
   const guestButton = page.locator('a[href="/?guest=true#explore"]');
   await guestButton.click();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
 };
 
 export const chat_input_enabled: StepFn = async (page) => {
@@ -258,7 +260,7 @@ export const chat_input_enabled: StepFn = async (page) => {
 };
 
 export const send_chat_message: StepFn = async (page, _ctx, example) => {
-  const message = (example.params?.message as string) ?? 'Hello';
+  const message = (example.params?.message as string) ?? "Hello";
   const chatInput = page.locator('input[placeholder*="Type"]');
   await chatInput.fill(message);
   const sendButton = page.locator('button:has-text("Send")');
@@ -271,7 +273,7 @@ export const message_appears_in_chat: StepFn = async (page, _ctx, example) => {
 };
 
 export const typing_indicator_visible: StepFn = async (page) => {
-  await expect(page.locator('.animate-bounce').first()).toBeVisible({
+  await expect(page.locator(".animate-bounce").first()).toBeVisible({
     timeout: 5000,
   });
 };
@@ -288,7 +290,7 @@ export const select_answer_formatter: StepFn = async (page, _ctx, example) => {
     'select[title="Select an answer formatter"]',
   );
   const formatterName = example.params?.formatter as string;
-  const options = formatterSelect.locator('option');
+  const options = formatterSelect.locator("option");
   const count = await options.count();
   for (let i = 0; i < count; i++) {
     const optionText = await options.nth(i).textContent();
@@ -301,8 +303,8 @@ export const select_answer_formatter: StepFn = async (page, _ctx, example) => {
 
 export const toggle_evaluation_type: StepFn = async (page) => {
   const toggleButton = page
-    .locator('button')
-    .filter({ has: page.locator('span.pointer-events-none') })
+    .locator("button")
+    .filter({ has: page.locator("span.pointer-events-none") })
     .first();
   await toggleButton.click();
 };
@@ -314,8 +316,8 @@ export const evaluation_type_is: StepFn = async (page, _ctx, example) => {
 };
 
 export const hero_visible: StepFn = async (page) => {
-  await expect(page.locator('#hero')).toBeVisible();
-  await expect(page.locator('#hero h1')).toContainText(
+  await expect(page.locator("#hero")).toBeVisible();
+  await expect(page.locator("#hero h1")).toContainText(
     "Welcome to Ben Horner's portfolio",
   );
 };
@@ -345,15 +347,15 @@ export const click_login_button: StepFn = async (page) => {
 export const fill_auth0_credentials: StepFn = async (page) => {
   await page.fill(
     'input[name="email"], input[name="username"]',
-    process.env.TEST_EMAIL || '',
+    process.env.TEST_EMAIL || "",
   );
-  await page.fill('input[name="password"]', process.env.TEST_PASSWORD || '');
+  await page.fill('input[name="password"]', process.env.TEST_PASSWORD || "");
 };
 
 export const submit_auth0_form: StepFn = async (page) => {
   await page.click('button[type="submit"], button[name="submit"]');
   await page.waitForURL(/^((?!auth0).)*$/, { timeout: 15000 });
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
 };
 
 export const click_explore_cta: StepFn = async (page) => {
@@ -363,48 +365,48 @@ export const click_explore_cta: StepFn = async (page) => {
 };
 
 export const explore_section_visible: StepFn = async (page) => {
-  await expect(page.locator('#explore')).toBeVisible();
-  const exploreTitle = page.getByRole('heading', {
+  await expect(page.locator("#explore")).toBeVisible();
+  const exploreTitle = page.getByRole("heading", {
     name: "Explore Ben's work",
   });
   await expect(exploreTitle).toBeVisible();
 };
 
 export const ai_response_received: StepFn = async (page) => {
-  await expect(page.locator('text=test question three')).toBeVisible({
+  await expect(page.locator("text=test question three")).toBeVisible({
     timeout: 8000,
   });
 };
 
 export const quick_reply_visible: StepFn = async (page) => {
-  const quickReplies = page.locator('text=Tell me about your projects');
+  const quickReplies = page.locator("text=Tell me about your projects");
   await expect(quickReplies.first()).toBeVisible({ timeout: 2000 });
 };
 
 export const click_quick_reply: StepFn = async (page) => {
-  const quickReplies = page.locator('text=Tell me about your projects');
+  const quickReplies = page.locator("text=Tell me about your projects");
   await quickReplies.first().click();
   await expect(
     page
       .locator('div[class*="justify-end"]')
-      .filter({ hasText: 'Tell me about your projects' }),
+      .filter({ hasText: "Tell me about your projects" }),
   ).toBeVisible();
 };
 
 export const send_message_with_enter: StepFn = async (page, _ctx, example) => {
   const message =
-    (example.params?.message as string) ?? 'Message sent with Enter key';
+    (example.params?.message as string) ?? "Message sent with Enter key";
   const chatInput = page.locator('input[placeholder*="Type"]');
   await expect(chatInput).toBeEnabled();
   await chatInput.fill(message);
-  await chatInput.press('Enter');
+  await chatInput.press("Enter");
   await expect(page.locator(`text=${message}`)).toBeVisible();
 };
 
 export const navigate_to_contact: StepFn = async (page) => {
   await page.locator('nav a[href="#contact"]').click();
-  await expect(page.locator('#contact')).toBeVisible();
-  await expect(page.locator('#contact h1')).toContainText("Let's Connect");
+  await expect(page.locator("#contact")).toBeVisible();
+  await expect(page.locator("#contact h1")).toContainText("Let's Connect");
 };
 
 export const social_links_visible: StepFn = async (page) => {
@@ -415,26 +417,26 @@ export const social_links_visible: StepFn = async (page) => {
 export const click_github_link: StepFn = async (page) => {
   const githubLink = page.locator('a[href*="github"]');
   const [newPage] = await Promise.all([
-    page.context().waitForEvent('page'),
+    page.context().waitForEvent("page"),
     githubLink.click(),
   ]);
-  expect(newPage.url()).toContain('github.com');
+  expect(newPage.url()).toContain("github.com");
   await newPage.close();
 };
 
 export const click_linkedin_link: StepFn = async (page) => {
   const linkedinLink = page.locator('a[href*="linkedin"]');
   const [newPage] = await Promise.all([
-    page.context().waitForEvent('page'),
+    page.context().waitForEvent("page"),
     linkedinLink.click(),
   ]);
-  expect(newPage.url()).toContain('linkedin.com');
+  expect(newPage.url()).toContain("linkedin.com");
   await newPage.close();
 };
 
 export const navigate_to_hero: StepFn = async (page) => {
   await page.locator('nav a[href="#hero"]').click();
-  await expect(page.locator('#hero')).toBeVisible();
+  await expect(page.locator("#hero")).toBeVisible();
 };
 
 export const logout_button_visible: StepFn = async (page) => {
@@ -449,7 +451,7 @@ export const click_logout: StepFn = async (page) => {
     .locator('a:has-text("Logout"), a:has-text("Sign Out")')
     .first();
   await logoutButton.click();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
 };
 
 export const navigate_to_explore: StepFn = async (page) => {
@@ -464,13 +466,13 @@ export const show_panels_button_visible: StepFn = async (page) => {
 export const snap_sections_have_count: StepFn = async (page, _ctx, example) => {
   const expectedCount = (example.expect?.snap_count as number) ?? 5;
   const chatLayout = page.locator('[data-testid="chat-layout-wrapper"]');
-  const snapSections = chatLayout.locator('.snap-start');
+  const snapSections = chatLayout.locator(".snap-start");
   await expect(snapSections).toHaveCount(expectedCount);
 };
 
 export const scroll_through_snap_sections: StepFn = async (page) => {
   const chatLayout = page.locator('[data-testid="chat-layout-wrapper"]');
-  const snapSections = chatLayout.locator('.snap-start');
+  const snapSections = chatLayout.locator(".snap-start");
   const count = await snapSections.count();
   for (let i = 0; i < count; i++) {
     const section = snapSections.nth(i);
@@ -548,14 +550,14 @@ export const steps: Record<string, StepFn> = {
 
 const validators: Record<string, StepFn> = {
   config_panel: async (page, _ctx, example) => {
-    if (example.expect?.config_panel === 'visible') {
+    if (example.expect?.config_panel === "visible") {
       await config_panel_visible(page, _ctx, example);
     } else {
       await config_panel_hidden(page, _ctx, example);
     }
   },
   evaluation_form: async (page, _ctx, example) => {
-    if (example.expect?.evaluation_form === 'visible') {
+    if (example.expect?.evaluation_form === "visible") {
       await evaluation_form_visible(page, _ctx, example);
     } else {
       await evaluation_form_hidden(page, _ctx, example);
@@ -569,7 +571,7 @@ const validators: Record<string, StepFn> = {
   status: evaluation_save_status,
   message: message_appears_in_chat,
   theme: async (page, _ctx, example) => {
-    if (example.expect?.theme === 'dark') {
+    if (example.expect?.theme === "dark") {
       await theme_is_dark(page, _ctx, example);
     } else {
       await theme_is_light(page, _ctx, example);
@@ -585,7 +587,7 @@ export const autoValidate: StepFn = async (page, ctx, example) => {
     const validator = validators[key];
     if (!validator) {
       throw new Error(
-        `Unknown expect key: "${key}". Available: ${Object.keys(validators).join(', ')}`,
+        `Unknown expect key: "${key}". Available: ${Object.keys(validators).join(", ")}`,
       );
     }
     await validator(page, ctx, example);

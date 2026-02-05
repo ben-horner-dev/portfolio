@@ -9,6 +9,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check --config-path ../../.config/biome.json",
+    "lint:fix": "biome check --write --config-path ../../.config/biome.json",
     "format": "biome format --write --config-path ../../.config/biome.json",
     "test:unit": "vitest --run --config ./vitest.unit.config.mts",
     "test:integration": "vitest --run --config ./vitest.integration.config.mts",

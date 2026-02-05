@@ -1,8 +1,8 @@
+import type { Session } from "neo4j-driver";
+import neo4j from "neo4j-driver";
 import { AgentGraphError } from "@/lib/explore/errors";
 import { getEmbeddings } from "@/lib/explore/vector/getEmbeddings";
 import { RELATIONSHIP_TYPES } from "@/lib/neo4j";
-import type { Session } from "neo4j-driver";
-import neo4j from "neo4j-driver";
 import { extractNeo4jRecord } from "./schema";
 import type { GraphSearchResult } from "./types";
 

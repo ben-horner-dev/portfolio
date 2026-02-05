@@ -140,6 +140,7 @@
 			]
 		},
 		"lint": {},
+		"lint:fix": {},
 		"format": {},
 		"migrate": {
 			"env": ["DATABASE_URL"]

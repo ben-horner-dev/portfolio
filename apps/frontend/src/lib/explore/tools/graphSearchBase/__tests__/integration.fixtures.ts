@@ -1,5 +1,5 @@
-import { RELATIONSHIP_TYPES } from "@/lib/neo4j/relationships";
 import type { Neogma } from "neogma";
+import { RELATIONSHIP_TYPES } from "@/lib/neo4j/relationships";
 
 export interface Neo4jNode {
   type: "node";

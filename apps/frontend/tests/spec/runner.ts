@@ -1,7 +1,7 @@
-import { test } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { test } from "@playwright/test";
 import { parse } from "yaml";
-import { autoValidate, steps, type Example, type TestContext } from "./steps";
+import { autoValidate, type Example, steps, type TestContext } from "./steps";
 
 export interface Scenario {
   name: string;

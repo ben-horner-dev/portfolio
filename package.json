@@ -26,7 +26,8 @@
   "packageManager": "bun@1.2.20",
   "scripts": {
     "semantic-release": "bunx semantic-release",
-    "docs": "typedoc --options ./.config/typedoc.json"
+    "docs": "typedoc --options ./.config/typedoc.json",
+    "lint:fix": "turbo lint:fix"
   },
   "release": {
     "branches": [
