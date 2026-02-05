@@ -8,7 +8,7 @@ inputs:
   node_version:
     description: "Node version to setup. Can set to blank string to disable node setup"
     required: false
-    default: "20"
+    default: "24"
 outputs:
   version:
     description: "Tag of released version"
@@ -54,10 +54,16 @@ runs:
 
     - name: Release
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
-        # semantic-release will exit 0 regardless of whether a release was made
-        # The successCmd in .releaserc only runs if a release is actually created
-        bun semantic-release || true
+        # Run semantic-release and capture exit code
+        # Exit 0 = success (release made or no release needed)
+        # Exit non-zero = actual error (should fail the pipeline)
+        if ! bun semantic-release; then
+          echo "❌ semantic-release failed with an error" >&2
+          exit 1
+        fi
 
         # Check if a release was actually made by looking for our success marker
         if [ -f "release_status.txt" ] && grep -q "released=true" release_status.txt; then
