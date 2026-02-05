@@ -8,7 +8,7 @@ vi.mock("next/link", () => ({
       <a href={href} data-testid="link">
         {children}
       </a>
-    )
+    ),
   ),
 }));
 
@@ -36,7 +36,7 @@ vi.mock("@/components/atoms/button", () => ({
       >
         {children}
       </div>
-    )
+    ),
   ),
 }));
 

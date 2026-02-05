@@ -194,12 +194,12 @@ it("Home page renders basic structure", async () => {
 
 it("Home page loads successfully with all features enabled", async () => {
   const { container, getAllByText } = render(
-    await Home({ searchParams: mockSearchParams })
+    await Home({ searchParams: mockSearchParams }),
   );
 
   expect(container).toBeDefined();
   expect(
-    getAllByText("Welcome to Ben Horner's portfolio")[0]
+    getAllByText("Welcome to Ben Horner's portfolio")[0],
   ).toBeInTheDocument();
   expect(getAllByText("Let's Connect")[0]).toBeInTheDocument();
   expect(getAllByText("Explore Ben's work")[0]).toBeInTheDocument();

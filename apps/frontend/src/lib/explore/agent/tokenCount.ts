@@ -24,7 +24,7 @@ const createGuestUser = (): User => ({
 });
 
 export const checkDailyTokenCount = async (
-  userAuthId: string
+  userAuthId: string,
 ): Promise<TokenCheckResult> => {
   if (userAuthId === GUEST_USER_ID) {
     return { success: true, user: createGuestUser(), isGuest: true };
@@ -39,7 +39,7 @@ export const checkDailyTokenCount = async (
     const user = await getUserByAuthId(userAuthId, db);
     if (!user) {
       throw new AgentGraphError(
-        "User not found, only authenticated users can use the chat"
+        "User not found, only authenticated users can use the chat",
       );
     }
     if (user.tokens < TOKEN_LIMIT) {
@@ -70,7 +70,7 @@ export const checkDailyTokenCount = async (
 
 export const updateTokenCount = async (
   user: User,
-  tokens: number
+  tokens: number,
 ): Promise<User> => {
   const uri = process.env.DATABASE_URL;
   if (!uri) {
@@ -80,7 +80,7 @@ export const updateTokenCount = async (
   try {
     const updatedUser = await upsertUser(
       { ...user, tokens: user.tokens + tokens },
-      db
+      db,
     );
     return updatedUser;
   } finally {

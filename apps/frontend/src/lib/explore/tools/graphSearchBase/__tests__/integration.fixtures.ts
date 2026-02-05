@@ -1,6 +1,5 @@
-import type { Neogma } from "neogma";
-import { createModels, type Models } from "@/lib/neo4j/models";
 import { RELATIONSHIP_TYPES } from "@/lib/neo4j/relationships";
+import type { Neogma } from "neogma";
 
 export interface Neo4jNode {
   type: "node";
@@ -53,7 +52,10 @@ export async function parseNeo4jJsonl(
         relationships.push(record);
       }
 
-      if (nodes.length >= maxNodes && relationships.length >= maxRelationships) {
+      if (
+        nodes.length >= maxNodes &&
+        relationships.length >= maxRelationships
+      ) {
         break;
       }
     } catch {}
@@ -71,7 +73,11 @@ export function createMinimalTestFixtures(): {
       type: "node",
       id: "0",
       labels: ["Technology"],
-      properties: { name: "TypeScript", id: "tech-typescript", category: "Language" },
+      properties: {
+        name: "TypeScript",
+        id: "tech-typescript",
+        category: "Language",
+      },
     },
     {
       type: "node",
@@ -101,31 +107,51 @@ export function createMinimalTestFixtures(): {
       type: "node",
       id: "10",
       labels: ["Skill"],
-      properties: { name: "Leadership", id: "skill-leadership", level: "expert" },
+      properties: {
+        name: "Leadership",
+        id: "skill-leadership",
+        level: "expert",
+      },
     },
     {
       type: "node",
       id: "11",
       labels: ["Skill"],
-      properties: { name: "Software Architecture", id: "skill-architecture", level: "expert" },
+      properties: {
+        name: "Software Architecture",
+        id: "skill-architecture",
+        level: "expert",
+      },
     },
     {
       type: "node",
       id: "12",
       labels: ["Skill"],
-      properties: { name: "Design Patterns", id: "skill-design-patterns", level: "expert" },
+      properties: {
+        name: "Design Patterns",
+        id: "skill-design-patterns",
+        level: "expert",
+      },
     },
     {
       type: "node",
       id: "20",
       labels: ["Pattern"],
-      properties: { name: "Atomic Design", id: "pattern-atomic", category: "UI" },
+      properties: {
+        name: "Atomic Design",
+        id: "pattern-atomic",
+        category: "UI",
+      },
     },
     {
       type: "node",
       id: "21",
       labels: ["Pattern"],
-      properties: { name: "Microservices", id: "pattern-microservices", category: "Architecture" },
+      properties: {
+        name: "Microservices",
+        id: "pattern-microservices",
+        category: "Architecture",
+      },
     },
     {
       type: "node",
@@ -134,7 +160,8 @@ export function createMinimalTestFixtures(): {
       properties: {
         id: "proj-portfolio",
         title: "Portfolio Website",
-        description: "A personal portfolio website built with Next.js, React, and Neo4j graph database for career data visualization",
+        description:
+          "A personal portfolio website built with Next.js, React, and Neo4j graph database for career data visualization",
         role: "Full Stack Developer",
         completedDate: "2024-01-15",
         complexity: 8,
@@ -149,7 +176,8 @@ export function createMinimalTestFixtures(): {
       properties: {
         id: "proj-api-service",
         title: "GraphQL API Service",
-        description: "A scalable GraphQL API service with TypeScript and microservices architecture",
+        description:
+          "A scalable GraphQL API service with TypeScript and microservices architecture",
         role: "Backend Developer",
         completedDate: "2023-08-20",
         complexity: 7,
@@ -167,7 +195,8 @@ export function createMinimalTestFixtures(): {
         position: "Senior Software Engineer",
         startDate: "2022-01-01",
         isCurrent: true,
-        description: "Leading a team of engineers on a major customer service platform migration",
+        description:
+          "Leading a team of engineers on a major customer service platform migration",
       },
     },
     {
@@ -190,7 +219,8 @@ export function createMinimalTestFixtures(): {
       labels: ["Achievement"],
       properties: {
         id: "ach-1",
-        description: "Led migration of customer service platform to Zendesk, improving ticket resolution time by 35%",
+        description:
+          "Led migration of customer service platform to Zendesk, improving ticket resolution time by 35%",
         impact: "high",
       },
     },
@@ -240,71 +270,101 @@ export function createMinimalTestFixtures(): {
       type: "relationship",
       id: "r1",
       label: RELATIONSHIP_TYPES.USES,
-      start: nodes.find((n) => n.properties.id === "proj-portfolio") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "tech-typescript") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-portfolio",
+      ) as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "tech-typescript",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r2",
       label: RELATIONSHIP_TYPES.USES,
-      start: nodes.find((n) => n.properties.id === "proj-portfolio") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-portfolio",
+      ) as Neo4jNode,
       end: nodes.find((n) => n.properties.id === "tech-react") as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r3",
       label: RELATIONSHIP_TYPES.USES,
-      start: nodes.find((n) => n.properties.id === "proj-portfolio") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-portfolio",
+      ) as Neo4jNode,
       end: nodes.find((n) => n.properties.id === "tech-nextjs") as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r4",
       label: RELATIONSHIP_TYPES.USES,
-      start: nodes.find((n) => n.properties.id === "proj-portfolio") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-portfolio",
+      ) as Neo4jNode,
       end: nodes.find((n) => n.properties.id === "tech-neo4j") as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r5",
       label: RELATIONSHIP_TYPES.USES,
-      start: nodes.find((n) => n.properties.id === "proj-api-service") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "tech-typescript") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-api-service",
+      ) as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "tech-typescript",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r10",
       label: RELATIONSHIP_TYPES.DEMONSTRATES,
-      start: nodes.find((n) => n.properties.id === "proj-portfolio") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "skill-architecture") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-portfolio",
+      ) as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "skill-architecture",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r11",
       label: RELATIONSHIP_TYPES.DEMONSTRATES,
-      start: nodes.find((n) => n.properties.id === "proj-api-service") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "skill-design-patterns") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-api-service",
+      ) as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "skill-design-patterns",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r20",
       label: RELATIONSHIP_TYPES.IMPLEMENTS,
-      start: nodes.find((n) => n.properties.id === "proj-portfolio") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-portfolio",
+      ) as Neo4jNode,
       end: nodes.find((n) => n.properties.id === "pattern-atomic") as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r21",
       label: RELATIONSHIP_TYPES.IMPLEMENTS,
-      start: nodes.find((n) => n.properties.id === "proj-api-service") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "pattern-microservices") as Neo4jNode,
+      start: nodes.find(
+        (n) => n.properties.id === "proj-api-service",
+      ) as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "pattern-microservices",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r30",
       label: RELATIONSHIP_TYPES.USED_TECHNOLOGY,
       start: nodes.find((n) => n.properties.id === "emp-current") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "tech-typescript") as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "tech-typescript",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
@@ -339,14 +399,18 @@ export function createMinimalTestFixtures(): {
       id: "r50",
       label: RELATIONSHIP_TYPES.DEMONSTRATES,
       start: nodes.find((n) => n.properties.id === "ach-1") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "skill-leadership") as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "skill-leadership",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
       id: "r51",
       label: RELATIONSHIP_TYPES.DEMONSTRATES,
       start: nodes.find((n) => n.properties.id === "ach-2") as Neo4jNode,
-      end: nodes.find((n) => n.properties.id === "skill-leadership") as Neo4jNode,
+      end: nodes.find(
+        (n) => n.properties.id === "skill-leadership",
+      ) as Neo4jNode,
     },
     {
       type: "relationship",
@@ -408,7 +472,9 @@ export async function seedIntegrationTestFixtures(
   }
 }
 
-export async function clearIntegrationTestDatabase(neogma: Neogma): Promise<void> {
+export async function clearIntegrationTestDatabase(
+  neogma: Neogma,
+): Promise<void> {
   const session = neogma.driver.session();
   try {
     await session.run("MATCH (n) DETACH DELETE n");
@@ -417,7 +483,9 @@ export async function clearIntegrationTestDatabase(neogma: Neogma): Promise<void
   }
 }
 
-export async function createIntegrationTestIndexes(neogma: Neogma): Promise<void> {
+export async function createIntegrationTestIndexes(
+  neogma: Neogma,
+): Promise<void> {
   const session = neogma.driver.session();
 
   try {

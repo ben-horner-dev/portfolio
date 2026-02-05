@@ -157,7 +157,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
           expect(strategy.description).toContain("technologies");
 
-          const result = await session.run(strategy.cypher, { query: "TypeScript" });
+          const result = await session.run(strategy.cypher, {
+            query: "TypeScript",
+          });
 
           expect(result.records).toBeInstanceOf(Array);
 
@@ -179,7 +181,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
           expect(strategy.description).toContain("skills");
 
-          const result = await session.run(strategy.cypher, { query: "architecture" });
+          const result = await session.run(strategy.cypher, {
+            query: "architecture",
+          });
 
           expect(result.records).toBeInstanceOf(Array);
         } finally {
@@ -197,7 +201,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
           expect(strategy.description).toContain("design patterns");
 
-          const result = await session.run(strategy.cypher, { query: "atomic" });
+          const result = await session.run(strategy.cypher, {
+            query: "atomic",
+          });
 
           expect(result.records).toBeInstanceOf(Array);
         } finally {
@@ -237,7 +243,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
           expect(strategy.description).toContain("Accomplishments");
 
-          const result = await session.run(strategy.cypher, { query: "migration" });
+          const result = await session.run(strategy.cypher, {
+            query: "migration",
+          });
 
           expect(result.records).toBeInstanceOf(Array);
 
@@ -259,7 +267,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
           expect(strategy.description).toContain("Degrees");
 
-          const result = await session.run(strategy.cypher, { query: "education" });
+          const result = await session.run(strategy.cypher, {
+            query: "education",
+          });
 
           expect(result.records).toBeInstanceOf(Array);
 
@@ -281,7 +291,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
           expect(strategy.description).toContain("Team leadership");
 
-          const result = await session.run(strategy.cypher, { query: "leadership" });
+          const result = await session.run(strategy.cypher, {
+            query: "leadership",
+          });
 
           expect(result.records).toBeInstanceOf(Array);
         } finally {
@@ -299,7 +311,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
           expect(strategy.description).toContain("General project search");
 
-          const result = await session.run(strategy.cypher, { query: "Portfolio" });
+          const result = await session.run(strategy.cypher, {
+            query: "Portfolio",
+          });
 
           expect(result.records).toBeInstanceOf(Array);
 
@@ -326,8 +340,8 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
           const result = await session.run(strategy.cypher, { query });
 
           if (result.records.length > 0) {
-            const technologies = result.records.flatMap((r) =>
-              r.get("technologies") as string[],
+            const technologies = result.records.flatMap(
+              (r) => r.get("technologies") as string[],
             );
             const hasMatchingTech = technologies.some((t) =>
               t.toLowerCase().includes(query.toLowerCase()),
@@ -352,7 +366,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
           const result = await session.run(strategy.cypher, { query });
 
           if (result.records.length > 0) {
-            expect(result.records[0].get("technologies")).toContain("TypeScript");
+            expect(result.records[0].get("technologies")).toContain(
+              "TypeScript",
+            );
           }
         }
       } finally {
@@ -367,7 +383,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.TECHNOLOGY);
-        const result = await session.run(strategy.cypher, { query: "TypeScript" });
+        const result = await session.run(strategy.cypher, {
+          query: "TypeScript",
+        });
 
         if (result.records.length > 0) {
           const record = result.records[0];
@@ -418,7 +436,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.ACHIEVEMENT);
-        const result = await session.run(strategy.cypher, { query: "migration" });
+        const result = await session.run(strategy.cypher, {
+          query: "migration",
+        });
 
         if (result.records.length > 0) {
           const record = result.records[0];
@@ -439,7 +459,9 @@ describe("ragGraphCypherSearchTool Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.EDUCATION);
-        const result = await session.run(strategy.cypher, { query: "education" });
+        const result = await session.run(strategy.cypher, {
+          query: "education",
+        });
 
         if (result.records.length > 0) {
           const record = result.records[0];

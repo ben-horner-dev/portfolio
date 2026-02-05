@@ -65,7 +65,7 @@ describe("tokenCount", () => {
       delete process.env.DATABASE_URL;
 
       await expect(checkDailyTokenCount("user123")).rejects.toThrow(
-        new AgentGraphError("DATABASE_URL is not set")
+        new AgentGraphError("DATABASE_URL is not set"),
       );
 
       process.env.DATABASE_URL = originalEnv;
@@ -77,8 +77,8 @@ describe("tokenCount", () => {
 
       await expect(checkDailyTokenCount("user123")).rejects.toThrow(
         new AgentGraphError(
-          "User not found, only authenticated users can use the chat"
-        )
+          "User not found, only authenticated users can use the chat",
+        ),
       );
 
       expect(mockClose).toHaveBeenCalled();
@@ -124,7 +124,7 @@ describe("tokenCount", () => {
 
       expect(mockUpsertUser).toHaveBeenCalledWith(
         { ...mockUser, tokens: 0 },
-        mockDb as never
+        mockDb as never,
       );
       expect(result).toEqual({ success: true, user: updatedMockUser });
       expect(mockClose).toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe("tokenCount", () => {
       mockGetUserByAuthId.mockRejectedValue(new Error("Database error"));
 
       await expect(checkDailyTokenCount("user123")).rejects.toThrow(
-        "Database error"
+        "Database error",
       );
       expect(mockClose).toHaveBeenCalled();
     });
@@ -186,7 +186,7 @@ describe("tokenCount", () => {
       };
 
       await expect(updateTokenCount(mockUser, 5)).rejects.toThrow(
-        new AgentGraphError("DATABASE_URL is not set")
+        new AgentGraphError("DATABASE_URL is not set"),
       );
 
       process.env.DATABASE_URL = originalEnv;
@@ -210,7 +210,7 @@ describe("tokenCount", () => {
 
       expect(mockUpsertUser).toHaveBeenCalledWith(
         { ...mockUser, tokens: 15 },
-        mockDb as never
+        mockDb as never,
       );
       expect(result).toEqual(updatedUser);
       expect(mockClose).toHaveBeenCalled();
@@ -230,7 +230,7 @@ describe("tokenCount", () => {
       mockUpsertUser.mockRejectedValue(new Error("Database error"));
 
       await expect(updateTokenCount(mockUser, 5)).rejects.toThrow(
-        "Database error"
+        "Database error",
       );
       expect(mockClose).toHaveBeenCalled();
     });

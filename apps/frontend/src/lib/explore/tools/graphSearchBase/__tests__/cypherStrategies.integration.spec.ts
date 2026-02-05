@@ -70,7 +70,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.TECHNOLOGY);
-        const result = await session.run(strategy.cypher, { query: "TypeScript" });
+        const result = await session.run(strategy.cypher, {
+          query: "TypeScript",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
 
@@ -110,7 +112,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.SKILL);
-        const result = await session.run(strategy.cypher, { query: "architecture" });
+        const result = await session.run(strategy.cypher, {
+          query: "architecture",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
 
@@ -149,7 +153,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.PATTERN);
-        const result = await session.run(strategy.cypher, { query: "microservices" });
+        const result = await session.run(strategy.cypher, {
+          query: "microservices",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
       } finally {
@@ -164,7 +170,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.EMPLOYMENT);
-        const result = await session.run(strategy.cypher, { query: "engineer" });
+        const result = await session.run(strategy.cypher, {
+          query: "engineer",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
 
@@ -206,7 +214,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.ACHIEVEMENT);
-        const result = await session.run(strategy.cypher, { query: "migration" });
+        const result = await session.run(strategy.cypher, {
+          query: "migration",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
 
@@ -245,7 +255,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.EDUCATION);
-        const result = await session.run(strategy.cypher, { query: "education" });
+        const result = await session.run(strategy.cypher, {
+          query: "education",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
 
@@ -265,7 +277,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.LEADERSHIP);
-        const result = await session.run(strategy.cypher, { query: "leadership" });
+        const result = await session.run(strategy.cypher, {
+          query: "leadership",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
 
@@ -286,7 +300,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.GENERAL);
-        const result = await session.run(strategy.cypher, { query: "Portfolio" });
+        const result = await session.run(strategy.cypher, {
+          query: "Portfolio",
+        });
 
         expect(result.records).toBeInstanceOf(Array);
 
@@ -350,7 +366,9 @@ describe("cypherStrategies Integration Tests", () => {
 
       try {
         const strategy = getCypherStrategy(CypherStrategyKey.TECHNOLOGY);
-        const result = await session.run(strategy.cypher, { query: "TypeScript" });
+        const result = await session.run(strategy.cypher, {
+          query: "TypeScript",
+        });
 
         if (result.records.length > 0) {
           const record = result.records[0];
@@ -418,7 +436,8 @@ describe("cypherStrategies Integration Tests", () => {
         get: (field: string) => {
           if (field === "complexity") return "not-a-number";
           if (field === "score") return undefined;
-          if (field === "completedDate") return { toString: () => "2024-01-01" };
+          if (field === "completedDate")
+            return { toString: () => "2024-01-01" };
           return null;
         },
       };
@@ -646,7 +665,12 @@ describe("cypherStrategies Integration Tests", () => {
       };
 
       await expect(
-        executeQuery(mockSession as never, "MATCH (n) RETURN n", {}, "template"),
+        executeQuery(
+          mockSession as never,
+          "MATCH (n) RETURN n",
+          {},
+          "template",
+        ),
       ).rejects.toThrow("Unknown error");
     });
 
@@ -807,12 +831,17 @@ describe("cypherStrategies Integration Tests", () => {
       const session = neogma.driver.session();
 
       try {
-        const results = await performVectorSearch(session, mockQueryVector, 10, {
-          dateRange: {
-            start: "2020-01-01",
-            end: "2025-12-31",
+        const results = await performVectorSearch(
+          session,
+          mockQueryVector,
+          10,
+          {
+            dateRange: {
+              start: "2020-01-01",
+              end: "2025-12-31",
+            },
           },
-        });
+        );
 
         expect(Array.isArray(results)).toBe(true);
       } finally {
@@ -825,9 +854,14 @@ describe("cypherStrategies Integration Tests", () => {
       const session = neogma.driver.session();
 
       try {
-        const results = await performVectorSearch(session, mockQueryVector, 10, {
-          technologies: ["React", "TypeScript"],
-        });
+        const results = await performVectorSearch(
+          session,
+          mockQueryVector,
+          10,
+          {
+            technologies: ["React", "TypeScript"],
+          },
+        );
 
         expect(Array.isArray(results)).toBe(true);
       } finally {
@@ -855,5 +889,4 @@ describe("cypherStrategies Integration Tests", () => {
       }
     });
   });
-
 });

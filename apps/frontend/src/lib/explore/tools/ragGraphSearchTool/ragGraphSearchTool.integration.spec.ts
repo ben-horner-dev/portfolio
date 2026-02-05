@@ -45,7 +45,7 @@ vi.mock("@/lib/explore/tools/utils", () => ({
   getToolConfig: vi.fn().mockResolvedValue({
     description: "Test tool description",
   }),
-}))
+}));
 
 describe("ragGraphSearchTool Integration Tests", () => {
   beforeAll(async () => {
@@ -134,9 +134,9 @@ describe("ragGraphSearchTool Integration Tests", () => {
 
     describe("Leadership keywords", () => {
       it("should detect leadership intent for 'leadership'", () => {
-        expect(parseSearchIntent("Tell me about your leadership experience")).toBe(
-          CypherStrategyKey.LEADERSHIP,
-        );
+        expect(
+          parseSearchIntent("Tell me about your leadership experience"),
+        ).toBe(CypherStrategyKey.LEADERSHIP);
       });
 
       it("should detect leadership intent for 'team'", () => {
@@ -218,9 +218,9 @@ describe("ragGraphSearchTool Integration Tests", () => {
 
     describe("Pattern keywords", () => {
       it("should detect pattern intent for 'microservice'", () => {
-        expect(parseSearchIntent("Have you built microservice architecture?")).toBe(
-          CypherStrategyKey.PATTERN,
-        );
+        expect(
+          parseSearchIntent("Have you built microservice architecture?"),
+        ).toBe(CypherStrategyKey.PATTERN);
       });
 
       it("should detect pattern intent for 'graphql'", () => {
@@ -414,7 +414,9 @@ describe("ragGraphSearchTool Integration Tests", () => {
       const session = testNeogma.driver.session();
 
       try {
-        const intent = parseSearchIntent("Have you built microservice architecture?");
+        const intent = parseSearchIntent(
+          "Have you built microservice architecture?",
+        );
         expect(intent).toBe(CypherStrategyKey.PATTERN);
 
         const result = await session.run(`

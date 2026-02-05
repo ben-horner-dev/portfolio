@@ -42,11 +42,11 @@ interface HomeProps {
 export default async function Home({ searchParams }: HomeProps) {
   const isHeroEnabled = await createFeatureFlag(
     FeatureFlag.HERO,
-    identifyAnonymousUser
+    identifyAnonymousUser,
   )();
   const isFooterEnabled = await createFeatureFlag(
     FeatureFlag.FOOTER,
-    identifyAnonymousUser
+    identifyAnonymousUser,
   )();
 
   const contentConfig = await getContentConfig();

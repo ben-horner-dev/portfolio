@@ -114,7 +114,7 @@ describe("useChatMessages", () => {
       expect.any(String),
       expect.objectContaining({
         content: "Chat ID is required",
-      })
+      }),
     );
     expect(mockSetIsTyping).toHaveBeenLastCalledWith(false);
   });
@@ -143,7 +143,7 @@ describe("useChatMessages", () => {
       expect.any(String),
       expect.objectContaining({
         content: "Config is required",
-      })
+      }),
     );
     expect(mockSetIsTyping).toHaveBeenLastCalledWith(false);
   });
@@ -152,7 +152,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("")).rejects.toThrow(
-      "Message input value is required"
+      "Message input value is required",
     );
   });
 
@@ -184,7 +184,7 @@ describe("useChatMessages", () => {
       "Hello",
       mockConfig,
       mockMessages,
-      "test-chat-id"
+      "test-chat-id",
     );
   });
 
@@ -307,7 +307,7 @@ describe("useChatMessages", () => {
     const { result } = renderHook(() => useChatMessages(mockAction));
 
     await expect(result.current.sendMessage("Hello")).rejects.toThrow(
-      "Stream error"
+      "Stream error",
     );
   });
 
@@ -328,7 +328,7 @@ describe("useChatMessages", () => {
       expect.any(String),
       expect.objectContaining({
         content: "You have reached the token limit for today",
-      })
+      }),
     );
     expect(mockAction).not.toHaveBeenCalled();
   });
@@ -342,7 +342,7 @@ describe("useChatMessages", () => {
     const messagesContainerRef = { current: mockContainer };
 
     const { result } = renderHook(() =>
-      useChatMessages(mockAction, messagesContainerRef)
+      useChatMessages(mockAction, messagesContainerRef),
     );
 
     await act(async () => {
@@ -350,7 +350,7 @@ describe("useChatMessages", () => {
     });
 
     expect(mockGetState().setScrollPosition).toHaveBeenCalledWith(
-      mockScrollTop
+      mockScrollTop,
     );
   });
 
