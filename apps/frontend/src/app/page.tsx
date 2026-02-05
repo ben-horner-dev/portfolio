@@ -35,7 +35,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Home() {
+interface HomeProps {
+  searchParams: Promise<{ guest?: string }>;
+}
+
+export default async function Home({ searchParams }: HomeProps) {
   const isHeroEnabled = await createFeatureFlag(
     FeatureFlag.HERO,
     identifyAnonymousUser,
@@ -75,6 +79,7 @@ export default async function Home() {
         type="application/ld+json"
         /* biome-ignore lint/security/noDangerouslySetInnerHtml: Structured data for SEO */
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        suppressHydrationWarning
       />
       <Background />
 
@@ -102,7 +107,7 @@ export default async function Home() {
           screenId={contentConfig.navigation.screenTypes.middle}
         >
           <Suspense fallback={<Fallback />}>
-            <ChatWrapper />
+            <ChatWrapper searchParams={searchParams} />
           </Suspense>
         </Screen>
 

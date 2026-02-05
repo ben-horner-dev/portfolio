@@ -1,0 +1,31 @@
+feature: Tools Configuration
+
+background:
+  given:
+    - navigate_to_guest_mode
+    - chat_is_visible
+    - click_toggle_panels_button
+
+scenarios:
+  - name: Tool is pre-selected from config
+    given: [config_panel_visible]
+    when: []
+    then: [tool_in_selected_list]
+    examples:
+      - desc: Mock RAG tool is selected
+        expect: { tool: mock_rag_graph_search }
+
+  - name: Remove and re-add tool
+    given: [config_panel_visible]
+    when: [remove_tool, add_tool]
+    then: [tool_in_selected_list]
+    examples:
+      - params: { tool: mock_rag_graph_search }
+        expect: { tool: mock_rag_graph_search }
+
+  - name: Save tools configuration
+    given: [config_panel_visible]
+    when: [click_save_button]
+    then: [toast_success_visible]
+    examples:
+      - expect: { toast: Configuration saved }

@@ -1,0 +1,36 @@
+feature: Evaluation Form
+
+background:
+  given:
+    - navigate_to_guest_mode
+    - chat_is_visible
+    - click_toggle_panels_button
+
+scenarios:
+  - name: Evaluation form is visible when panels shown
+    given: []
+    when: []
+    then: [evaluation_form_visible]
+
+  - name: Set evaluation field value
+    given: [evaluation_form_visible]
+    when: [set_evaluation_field]
+    then: []
+    examples:
+      - desc: Set Information Accuracy to 5
+        params: { field: Information Accuracy, value: 5 }
+
+  - name: Submit evaluation
+    given: [evaluation_form_visible]
+    when: [click_save_evaluation]
+    then: [evaluation_save_status]
+    examples:
+      - expect: { status: success }
+
+  - name: Toggle evaluation type
+    given: [config_panel_visible]
+    when: [toggle_evaluation_type]
+    then: [evaluation_type_is]
+    examples:
+      - desc: Switch to Generation
+        expect: { evaluationType: Generation }

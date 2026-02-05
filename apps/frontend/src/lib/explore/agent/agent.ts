@@ -267,7 +267,9 @@ class AgentOrchestrator {
         .map((action, index) => {
           const result = step.results[index] || "";
           if (action.log !== this.config.defaultAgentActionLog) {
-            return `Tool: ${action.tool}, input: ${JSON.stringify(action.toolInput)}\nOutput: ${result}`;
+            return `Tool: ${action.tool}, input: ${JSON.stringify(
+              action.toolInput,
+            )}\nOutput: ${result}`;
           }
           return undefined;
         })
@@ -318,19 +320,27 @@ class AgentOrchestrator {
       const toolFn = this.toolMap[tool.name as ToolName];
       if (!toolFn) {
         throw new AgentGraphError(
-          `Initial Tool not found: ${tool.name}. The tool must be one of: ${Object.keys(this.toolMap).join(", ")}`,
+          `Initial Tool not found: ${
+            tool.name
+          }. The tool must be one of: ${Object.keys(this.toolMap).join(", ")}`,
         );
       }
       if (!this.allTools.includes(toolFn)) {
         throw new AgentGraphError(
-          `Initial tool: ${tool.name} must be one of the tool group: ${this.allTools.map((tool) => tool.name).join(", ")}`,
+          `Initial tool: ${
+            tool.name
+          } must be one of the tool group: ${this.allTools
+            .map((tool) => tool.name)
+            .join(", ")}`,
         );
       }
       return toolFn;
     });
     if (tools.length < 1) {
       throw new AgentGraphError(
-        `No Initial tools were found, ensure you have selected at least one from the following: ${this.allTools.map((tool) => tool.name).join(", ")}`,
+        `No Initial tools were found, ensure you have selected at least one from the following: ${this.allTools
+          .map((tool) => tool.name)
+          .join(", ")}`,
       );
     }
     return tools;
@@ -597,7 +607,9 @@ class AgentOrchestrator {
     }
 
     logger.info(
-      `Router: ${lastStep.executionType} tool execution - ${toolNames.join(", ")}`,
+      `Router: ${lastStep.executionType} tool execution - ${toolNames.join(
+        ", ",
+      )}`,
     );
     this.toolCallCount += toolNames.length;
     return toolNames;

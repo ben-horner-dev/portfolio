@@ -10,7 +10,7 @@ export function ChatMessagesWrapper({
   return (
     <div
       ref={messagesContainerRef}
-      className="h-80 overflow-y-auto p-6 space-y-4  bg-transparent"
+      className="flex-1 min-h-60 max-h-[50vh] overflow-y-auto p-6 space-y-4 bg-transparent"
     >
       {children}
     </div>

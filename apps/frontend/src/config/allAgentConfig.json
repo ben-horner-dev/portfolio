@@ -37,6 +37,10 @@
     {
       "name": "rag_graph_search",
       "description": "Searches graphed and indexed course data using natural language queries. Returns relevant courses with metadata like provider, content type, similarity scores, and delivery information."
+    },
+    {
+      "name": "rag_graph_cypher_search",
+      "description": "Search the portfolio graph using LLM-selected Cypher templates. Select the most appropriate template based on what the user is looking for: project_overview (general projects), project_by_technology (find projects using specific tech like React, Python), project_by_pattern (find projects using design patterns), employment_overview (work history, jobs), employment_achievements (accomplishments, impact), skills_from_projects (skills shown in projects), skills_from_achievements (skills proven through achievements), tech_across_jobs (technologies used across career), education_details (degrees, universities), leadership_experience (team leadership, management), code_examples (actual code samples)."
     }
   ],
   "initialTools": [
@@ -51,6 +55,10 @@
     {
       "name": "rag_graph_search",
       "description": "Searches graphed and indexed course data using natural language queries. Returns relevant courses with metadata like provider, content type, similarity scores, and delivery information."
+    },
+    {
+      "name": "rag_graph_cypher_search",
+      "description": "Search the portfolio graph using LLM-selected Cypher templates. Select the most appropriate template based on what the user is looking for: project_overview (general projects), project_by_technology (find projects using specific tech like React, Python), project_by_pattern (find projects using design patterns), employment_overview (work history, jobs), employment_achievements (accomplishments, impact), skills_from_projects (skills shown in projects), skills_from_achievements (skills proven through achievements), tech_across_jobs (technologies used across career), education_details (degrees, universities), leadership_experience (team leadership, management), code_examples (actual code samples)."
     }
   ],
   "answerFormatters": [{ "name": "default" }, { "name": "thoughtless" }],

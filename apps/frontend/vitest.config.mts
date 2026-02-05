@@ -50,7 +50,6 @@ export default defineConfig({
         "src/components/organisms/chatWrapper/**",
         "src/lib/explore/graph/**",
         "src/lib/explore/llms/mockLLM/**",
-        "src/lib/explore/tools/ragGraphSearchTool/**",
         "src/lib/explore/maps.ts",
         "src/lib/explore/types.ts",
         "src/lib/explore/tools/mockRag/**",
@@ -77,7 +76,22 @@ export default defineConfig({
         test: {
           name: "all",
           include: ["src/**/*.{test,spec}.{js,ts,jsx,tsx}"],
-          exclude: ["src/stories/**", "src/**/*.stories.{js,ts,jsx,tsx}"],
+          exclude: [
+            "src/stories/**",
+            "src/**/*.stories.{js,ts,jsx,tsx}",
+            "src/**/*.integration.spec.{js,ts,jsx,tsx}",
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          include: ["src/**/*.integration.spec.{js,ts,jsx,tsx}"],
+          fileParallelism: false,
+          sequence: {
+            concurrent: false,
+          },
         },
       },
     ],

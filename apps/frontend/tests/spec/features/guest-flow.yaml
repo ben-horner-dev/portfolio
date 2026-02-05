@@ -1,0 +1,25 @@
+feature: Guest Flow
+
+scenarios:
+  - name: Guest button visible on login overlay
+    given: [navigate_to_home]
+    when: []
+    then: [login_overlay_visible, guest_button_visible]
+
+  - name: Click guest button navigates to guest mode
+    given: [navigate_to_home, login_overlay_visible]
+    when: [click_guest_button]
+    then: [chat_is_visible, chat_input_enabled]
+
+  - name: Guest can send messages
+    given: [navigate_to_guest_mode, chat_is_visible]
+    when: [send_chat_message]
+    then: [message_appears_in_chat, typing_indicator_visible]
+    examples:
+      - params: { message: Hello from guest }
+        expect: { message: Hello from guest }
+
+  - name: Guest can access config panel
+    given: [navigate_to_guest_mode, chat_is_visible]
+    when: [click_toggle_panels_button]
+    then: [config_panel_visible, evaluation_form_visible]

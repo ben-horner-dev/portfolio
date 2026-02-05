@@ -1,0 +1,23 @@
+feature: Mobile Layout
+
+viewport:
+  width: 390
+  height: 844
+
+scenarios:
+  - name: Mobile layout has 5 snap sections when panels toggled
+    given:
+      - navigate_to_home
+      - login_button_visible
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+      - navigate_to_explore
+      - show_panels_button_visible
+    when:
+      - click_toggle_panels_button
+    then:
+      - snap_sections_have_count
+      - scroll_through_snap_sections
+    examples:
+      - expect: { snap_count: 5 }

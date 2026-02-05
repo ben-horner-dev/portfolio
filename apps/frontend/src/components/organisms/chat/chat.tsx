@@ -1,7 +1,13 @@
 "use client";
 
+import { Settings2, X } from "lucide-react";
 import { useEffect } from "react";
 import { Input } from "@/components/atoms/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/atoms/tooltip";
 import type { ChatHeader } from "@/components/molecules/chatHeader";
 import { ChatInput } from "@/components/molecules/chatInput";
 import { ChatMessagesWrapper } from "@/components/molecules/chatMessagesWrapper/chatMessagesWrapper";
@@ -31,7 +37,7 @@ export function Chat({ header, placeholderTexts, action }: ChatProps) {
     messagesContainerRef,
   );
 
-  const { thoughts } = useChatStore();
+  const { thoughts, showPanels, togglePanels } = useChatStore();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is stable from useChatScroll hook
   useEffect(() => {
@@ -69,8 +75,27 @@ export function Chat({ header, placeholderTexts, action }: ChatProps) {
   };
   return (
     <ChatWindowWrapper data-auth-required="true">
-      <div className="bg-card/30 backdrop-blur-sm rounded-2xl border border-border/20 shadow-2xl overflow-hidden hover:animate-terminal-glow transition-all duration-500">
-        {header}
+      <div className="bg-card/30 backdrop-blur-sm rounded-2xl border border-border/20 shadow-2xl overflow-hidden hover:animate-terminal-glow transition-all duration-500 h-full flex flex-col">
+        <div className="relative">
+          {header}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={togglePanels}
+                className="absolute top-4 right-4 p-2 rounded-full bg-black/10 text-black hover:bg-black/20 border border-black/50 dark:bg-white/20 dark:text-white dark:hover:bg-white/30 dark:border-white/30 transition-colors cursor-pointer"
+                aria-label={showPanels ? "Hide panels" : "Show panels"}
+              >
+                {showPanels ? <X size={18} /> : <Settings2 size={18} />}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              {showPanels
+                ? "Hide config & evaluation"
+                : "Show config & evaluation"}
+            </TooltipContent>
+          </Tooltip>
+        </div>
         <ChatMessagesWrapper messagesContainerRef={messagesContainerRef}>
           {messages.map((message) => (
             <span key={message.id}>

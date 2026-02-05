@@ -77,10 +77,10 @@ export type TestHumanEvaluation = {
   configId: string;
   evaluationSet: number;
   evaluatorId: string;
-  recommendationQuality: number;
-  explanationClarity: number;
-  relevanceToProfile: number;
-  courseVariety: number;
-  trustworthiness: number;
+  informationAccuracy: number;
+  responseHelpfulness: number;
+  responseRelevance: number;
+  responseCompleteness: number;
+  conversationalQuality: number;
   overallSatisfaction: number;
 };

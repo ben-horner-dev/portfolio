@@ -1,0 +1,112 @@
+feature: Authenticated User Journey
+
+scenarios:
+  - name: Complete authenticated user journey
+    given:
+      - navigate_to_home
+      - hero_visible
+      - protected_content_hidden
+      - login_button_visible
+    when:
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+    then:
+      - hero_visible
+
+  - name: Authenticated user can access chat
+    given:
+      - navigate_to_home
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+    when:
+      - click_explore_cta
+    then:
+      - explore_section_visible
+      - chat_input_enabled
+
+  - name: Authenticated user can send messages and receive responses
+    given:
+      - navigate_to_home
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+      - click_explore_cta
+      - explore_section_visible
+    when:
+      - send_chat_message
+    then:
+      - typing_indicator_visible
+      - ai_response_received
+    examples:
+      - params: { message: "Hello, this is a test message" }
+        expect: { message: "Hello, this is a test message" }
+
+  - name: User can use quick replies
+    given:
+      - navigate_to_home
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+      - click_explore_cta
+      - send_chat_message
+      - ai_response_received
+      - quick_reply_visible
+    when:
+      - click_quick_reply
+    then:
+      - typing_indicator_visible
+    examples:
+      - params: { message: "Hello, this is a test message" }
+
+  - name: User can send message with Enter key
+    given:
+      - navigate_to_home
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+      - click_explore_cta
+    when:
+      - send_message_with_enter
+    then: []
+    examples:
+      - params: { message: Message sent with Enter key }
+
+  - name: User can navigate to contact section
+    given:
+      - navigate_to_home
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+    when:
+      - navigate_to_contact
+    then:
+      - social_links_visible
+
+  - name: Social links open in new tabs
+    given:
+      - navigate_to_home
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+      - navigate_to_contact
+      - social_links_visible
+    when:
+      - click_github_link
+      - click_linkedin_link
+    then: []
+
+  - name: User can logout
+    given:
+      - navigate_to_home
+      - click_login_button
+      - fill_auth0_credentials
+      - submit_auth0_form
+      - navigate_to_hero
+      - logout_button_visible
+    when:
+      - click_logout
+    then:
+      - login_button_visible
+      - protected_content_hidden

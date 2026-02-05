@@ -194,4 +194,31 @@ describe("chatStore", () => {
       maxTokens: 2000,
     });
   });
+
+  it("sets and gets graphMermaid", () => {
+    const mermaidGraph = "graph TD; A-->B; B-->C;";
+
+    useChatStore.getState().setGraphMermaid(mermaidGraph);
+    expect(useChatStore.getState().graphMermaid).toBe(mermaidGraph);
+  });
+
+  it("sets showPanels", () => {
+    expect(useChatStore.getState().showPanels).toBe(false);
+
+    useChatStore.getState().setShowPanels(true);
+    expect(useChatStore.getState().showPanels).toBe(true);
+
+    useChatStore.getState().setShowPanels(false);
+    expect(useChatStore.getState().showPanels).toBe(false);
+  });
+
+  it("toggles showPanels", () => {
+    expect(useChatStore.getState().showPanels).toBe(false);
+
+    useChatStore.getState().togglePanels();
+    expect(useChatStore.getState().showPanels).toBe(true);
+
+    useChatStore.getState().togglePanels();
+    expect(useChatStore.getState().showPanels).toBe(false);
+  });
 });

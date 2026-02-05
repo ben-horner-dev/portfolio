@@ -1,17 +1,5 @@
 export const TOOL_NAME = "rag_graph_search";
 
-export enum SearchIntentType {
-  TECHNOLOGY = "technology",
-  SKILL = "skill",
-  PATTERN = "pattern",
-  EMPLOYMENT = "employment",
-  ACHIEVEMENT = "achievement",
-  EDUCATION = "education",
-  LEADERSHIP = "leadership",
-  CODE = "code",
-  GENERAL = "general",
-}
-
 export enum EmploymentKeywords {
   WORK_EXPERIENCE = "work experience",
   EMPLOYMENT = "employment",

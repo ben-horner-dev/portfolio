@@ -2,7 +2,6 @@ import type { createStreamableValue, StreamableValue } from "@ai-sdk/rsc";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { ToolMessage } from "@langchain/core/messages";
 import type { ChatPromptTemplate } from "@langchain/core/prompts";
-
 import type z from "zod";
 import type { ExecutionType, InterlocutorType } from "@/lib/explore/constants";
 import type {
@@ -151,7 +150,8 @@ export type ToolInput = FinalAnswerArgs | ChatIdOnlyArgs;
 export type ToolName =
   | "final_answer"
   | "rag_graph_search"
-  | "mock_rag_graph_search";
+  | "mock_rag_graph_search"
+  | "rag_graph_cypher_search";
 
 export interface ToolStateBinding {
   stateFields: (keyof AgentState)[];

@@ -6,7 +6,6 @@ import {
   updateTokenCount,
 } from "@/lib/explore/agent/tokenCount";
 import { InterlocutorType } from "@/lib/explore/constants";
-import { AgentGraphError } from "@/lib/explore/errors";
 import { useChatStore } from "@/lib/stores/chatStore";
 import { useChatMessages } from "./useChatMessages";
 
@@ -58,13 +57,16 @@ describe("useChatMessages", () => {
       batchUpdate: vi.fn(),
     });
     mockCheckDailyTokenCount.mockResolvedValue({
-      id: "user-id",
-      name: null,
-      email: "test@example.com",
-      tokens: 0,
-      authId: "auth-id",
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      success: true,
+      user: {
+        id: "user-id",
+        name: null,
+        email: "test@example.com",
+        tokens: 0,
+        authId: "auth-id",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     });
     mockUpdateTokenCount.mockResolvedValue({
       id: "user-id",
@@ -89,39 +91,61 @@ describe("useChatMessages", () => {
   });
 
   it("should throw error when chatId is missing", async () => {
+    const mockSetIsTyping = vi.fn();
+    const mockUpdateMessage = vi.fn();
     mockUseChatStore.mockReturnValue({
       messages: mockMessages,
-      setIsTyping: vi.fn(),
-      updateMessage: vi.fn(),
+      setIsTyping: mockSetIsTyping,
+      updateMessage: mockUpdateMessage,
       updateThoughts: vi.fn(),
       chatId: null,
       config: mockConfig,
       addMessages: vi.fn(),
+      batchUpdate: vi.fn(),
     });
 
     const { result } = renderHook(() => useChatMessages(mockAction));
 
-    await expect(result.current.sendMessage("test message")).rejects.toThrow(
-      AgentGraphError,
+    await act(async () => {
+      await result.current.sendMessage("test message");
+    });
+
+    expect(mockUpdateMessage).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        content: "Chat ID is required",
+      }),
     );
+    expect(mockSetIsTyping).toHaveBeenLastCalledWith(false);
   });
 
   it("should throw error when config is missing", async () => {
+    const mockSetIsTyping = vi.fn();
+    const mockUpdateMessage = vi.fn();
     mockUseChatStore.mockReturnValue({
       messages: mockMessages,
-      setIsTyping: vi.fn(),
-      updateMessage: vi.fn(),
+      setIsTyping: mockSetIsTyping,
+      updateMessage: mockUpdateMessage,
       updateThoughts: vi.fn(),
       chatId: "test-chat-id",
       config: null,
       addMessages: vi.fn(),
+      batchUpdate: vi.fn(),
     });
 
     const { result } = renderHook(() => useChatMessages(mockAction));
 
-    await expect(result.current.sendMessage("test message")).rejects.toThrow(
-      AgentGraphError,
+    await act(async () => {
+      await result.current.sendMessage("test message");
+    });
+
+    expect(mockUpdateMessage).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        content: "Config is required",
+      }),
     );
+    expect(mockSetIsTyping).toHaveBeenLastCalledWith(false);
   });
 
   it("should throw error when inputValue is missing", async () => {
@@ -239,6 +263,37 @@ describe("useChatMessages", () => {
     expect(mockUpdateTokenCount).toHaveBeenCalled();
   });
 
+  it("should handle streaming response with graphMermaid", async () => {
+    const mockSetGraphMermaid = vi.fn();
+    mockUseChatStore.mockReturnValue({
+      messages: mockMessages,
+      setIsTyping: vi.fn(),
+      updateMessage: vi.fn(),
+      updateThoughts: vi.fn(),
+      setGraphMermaid: mockSetGraphMermaid,
+      chatId: "test-chat-id",
+      config: mockConfig,
+      addMessages: vi.fn(),
+      batchUpdate: vi.fn(),
+    });
+
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { graphMermaid: "graph TD; A-->B;" };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    expect(mockSetGraphMermaid).toHaveBeenCalledWith("graph TD; A-->B;");
+  });
+
   it("should handle stream errors", async () => {
     const mockError = new Error("Stream error");
     const mockAsyncIterable = {
@@ -256,10 +311,11 @@ describe("useChatMessages", () => {
     );
   });
 
-  it("should handle user facing errors", async () => {
-    const userFacingError = new Error("User facing error");
-    userFacingError.name = "UserFacingErrors";
-    mockAction.mockRejectedValue(userFacingError);
+  it("should handle token limit error gracefully", async () => {
+    mockCheckDailyTokenCount.mockResolvedValue({
+      success: false,
+      error: "You have reached the token limit for today",
+    });
 
     const { result } = renderHook(() => useChatMessages(mockAction));
 
@@ -271,9 +327,10 @@ describe("useChatMessages", () => {
     expect(mockStore.updateMessage).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        content: "User facing error",
+        content: "You have reached the token limit for today",
       }),
     );
+    expect(mockAction).not.toHaveBeenCalled();
   });
 
   it("should update scroll position when messagesContainerRef is provided", async () => {
@@ -295,5 +352,49 @@ describe("useChatMessages", () => {
     expect(mockGetState().setScrollPosition).toHaveBeenCalledWith(
       mockScrollTop,
     );
+  });
+
+  it("should skip token update for guest users", async () => {
+    mockUseChatStore.mockReturnValue({
+      messages: mockMessages,
+      setIsTyping: vi.fn(),
+      updateMessage: vi.fn(),
+      updateThoughts: vi.fn(),
+      chatId: "guest",
+      config: mockConfig,
+      addMessages: vi.fn(),
+      batchUpdate: vi.fn(),
+    });
+
+    mockCheckDailyTokenCount.mockResolvedValue({
+      success: true,
+      user: {
+        id: "00000000-0000-0000-0000-000000000000",
+        name: "Guest User",
+        email: "guest@example.com",
+        tokens: 0,
+        authId: "guest",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      isGuest: true,
+    });
+
+    const mockAsyncIterable = {
+      async *[Symbol.asyncIterator]() {
+        yield { totalTokens: 50 };
+      },
+    };
+
+    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
+
+    const { result } = renderHook(() => useChatMessages(mockAction));
+
+    await act(async () => {
+      await result.current.sendMessage("Hello");
+    });
+
+    expect(mockCheckDailyTokenCount).toHaveBeenCalledWith("guest");
+    expect(mockUpdateTokenCount).not.toHaveBeenCalled();
   });
 });

@@ -1,33 +1,38 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import type { StaticImageData } from "next/image";
-import { beforeEach, expect, it } from "vitest";
-import { ImageSrc } from "@/lib/constants";
-import { SocialLink } from "./index";
+import { render, screen } from "@testing-library/react";
+import { expect, it, vi } from "vitest";
+import { SocialLink } from "./socialLink";
 
-const createMockImage = (src: string): StaticImageData => ({
-  src,
-  height: 64,
-  width: 64,
-  blurDataURL:
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-  blurWidth: 1,
-  blurHeight: 1,
-});
+vi.mock("next/link", () => ({
+  default: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>,
+}));
 
-beforeEach(() => {
-  cleanup();
-});
+vi.mock("next/image", () => ({
+  default: ({ alt, src }: { alt: string; src: string }) => (
+    // biome-ignore lint/performance/noImgElement: Intentionally using img to mock Next.js Image in tests
+    <img alt={alt} src={src} />
+  ),
+}));
 
-it("SocialLink handles different image sources", () => {
+it("SocialLink renders with link and image", () => {
+  const mockImgGttr = vi.fn().mockReturnValue("/test-image.png");
   render(
     <SocialLink
-      href="https://twitter.com"
-      alt="Twitter"
-      src={ImageSrc.GITHUB}
-      imgGttr={() => createMockImage("/images/twitter.png")}
+      href="https://example.com"
+      alt="Test Social"
+      src="test.png"
+      imgGttr={mockImgGttr}
     />,
   );
-
-  const image = screen.getByAltText("Twitter");
-  expect(image).toBeInTheDocument();
+  expect(screen.getByRole("link")).toHaveAttribute(
+    "href",
+    "https://example.com",
+  );
+  expect(screen.getByRole("img")).toHaveAttribute("alt", "Test Social");
+  expect(mockImgGttr).toHaveBeenCalledWith("test.png");
 });

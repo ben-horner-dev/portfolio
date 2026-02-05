@@ -26,10 +26,3 @@ export class ImageSrcError extends ContentConfigError {
     this.name = "ImageSrcError";
   }
 }
-
-export class UserFacingErrors extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "UserFacingErrors";
-  }
-}
