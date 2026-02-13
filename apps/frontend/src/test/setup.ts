@@ -3,6 +3,8 @@ import { expect, vi } from "vitest";
 
 expect.extend(matchers);
 
+vi.mock("server-only", () => ({}));
+
 vi.mock("@/flags", () => ({
   chatEvalFlag: vi.fn(),
   createFeatureFlag: vi.fn(),

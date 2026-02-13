@@ -1,9 +1,5 @@
 import { readStreamableValue } from "@ai-sdk/rsc";
 import { useCallback } from "react";
-import {
-  checkDailyTokenCount,
-  updateTokenCount,
-} from "@/lib/explore/agent/tokenCount";
 import { InterlocutorType } from "@/lib/explore/constants";
 import { AgentGraphError } from "@/lib/explore/errors";
 import type {
@@ -64,13 +60,6 @@ export const useChatMessages = (
           scrollPosition: messagesContainerRef?.current?.scrollTop || 0,
         });
 
-        const tokenCheckResult = await checkDailyTokenCount(chatId);
-        if (!tokenCheckResult.success) {
-          throw new AgentGraphError(tokenCheckResult.error);
-        }
-        const user = tokenCheckResult.user;
-        const isGuest = tokenCheckResult.isGuest ?? false;
-
         if (messagesContainerRef?.current) {
           const { setScrollPosition } = useChatStore.getState();
           setScrollPosition(messagesContainerRef.current.scrollTop);
@@ -84,7 +73,6 @@ export const useChatMessages = (
           messages,
           String(chatId),
         );
-        let tokens = 0;
         for await (const streamIteration of readStreamableValue(
           response,
         ) as AsyncIterable<AgentResponse>) {
@@ -102,9 +90,6 @@ export const useChatMessages = (
           if (streamIteration?.answer) {
             newMessage.content = streamIteration.answer;
           }
-          if (streamIteration?.totalTokens) {
-            tokens += streamIteration.totalTokens;
-          }
           if (streamIteration?.graphMermaid) {
             setGraphMermaid(streamIteration.graphMermaid);
           }
@@ -113,9 +98,6 @@ export const useChatMessages = (
           });
         }
         setIsTyping(false);
-        if (!isGuest) {
-          await updateTokenCount(user, tokens);
-        }
       } catch (error) {
         logger.error(error);
         setIsTyping(false);

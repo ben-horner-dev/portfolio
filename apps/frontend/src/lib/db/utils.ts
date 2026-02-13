@@ -1,11 +1,11 @@
-"use server";
 import type { NeonQueryFunction } from "@neondatabase/serverless";
 import { neon } from "@neondatabase/serverless";
+import "server-only";
 
+import { Environment } from "@/lib/constants";
 import { drizzle as serverLessDrizzle } from "drizzle-orm/neon-http";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { Environment } from "@/lib/constants";
 import { DbClientError, DbOpError } from "./errors";
 import { schema } from "./schema";
 import type { Database, ServerLessDatabase } from "./types";

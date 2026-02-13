@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { TOKEN_LIMIT } from "@/lib/constants";
 import { upsertUser } from "@/lib/db/commands/upsertUser";
