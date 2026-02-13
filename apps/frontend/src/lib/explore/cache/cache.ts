@@ -1,7 +1,6 @@
-"use server";
-
 import { kv } from "@vercel/kv";
 import { createClient } from "redis";
+import "server-only";
 
 const isDev = process.env.NODE_ENV === "development";
 

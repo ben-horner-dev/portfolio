@@ -16,12 +16,12 @@ This portfolio is built as a monorepo using modern web technologies and follows 
 
 ## ✨ Features
 
-- **AI-Powered Chat Interface**: Intelligent conversation capabilities using LangGraph and multiple LLM providers
+- **AI-Powered Chat Interface**: Intelligent conversation capabilities using LangGraph with RAG over a Neo4j knowledge graph
 - **Real-time Interactions**: Live chat with typing indicators and message streaming
 - **Modern UI/UX**: Built with Tailwind CSS and ShadCN components following atomic design
 - **Authentication**: Secure user authentication with Auth0 integration
 - **Feature Flags**: Dynamic feature management with PostHog and Statsig
-- **Performance Monitoring**: Comprehensive error tracking and analytics with Sentry
+- **Observability**: Error tracking with Sentry, product analytics with PostHog, and LLM tracing with LangSmith
 - **Responsive Design**: Mobile-first approach with optimized performance
 - **Type Safety**: Full TypeScript implementation across all layers
 
@@ -29,10 +29,10 @@ This portfolio is built as a monorepo using modern web technologies and follows 
 
 ### Frontend
 
-- **Next.js 15** - React framework with App Router
+- **Next.js 16** - React framework with App Router
 - **React 19** - UI library with concurrent features
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
+- **TypeScript 5** - Type-safe development
+- **Tailwind CSS 4** - Utility-first styling
 - **ShadCN/UI** - Component library
 - **Zustand** - State management
 
@@ -41,8 +41,8 @@ This portfolio is built as a monorepo using modern web technologies and follows 
 - **LangGraph** - AI agent orchestration
 - **OpenAI** - Primary LLM provider
 - **Cohere** - Alternative LLM provider
-- **Pinecone** - Vector database for embeddings
-- **Neo4j** - Graph database for relationships
+- **Neo4j** - Graph + vector database for RAG knowledge graph
+- **Pinecone** - Vector database (secondary)
 
 ### Database & Storage
 
@@ -65,10 +65,10 @@ This portfolio is built as a monorepo using modern web technologies and follows 
 
 ### Testing & Quality
 
-- **Vitest** - Unit and integration testing
-- **Playwright** - End-to-end testing
-- **Storybook** - Component documentation
-- **Biome** - Linting and formatting
+- **Vitest 4** - Unit and integration testing
+- **Playwright 1.58** - End-to-end testing
+- **Storybook 10** - Component documentation and visual testing
+- **Biome 2** - Linting and formatting
 
 ## 🚀 Quick Start
 
@@ -129,6 +129,10 @@ This portfolio is built as a monorepo using modern web technologies and follows 
 
    # Monitoring
    SENTRY_AUTH_TOKEN="your-sentry-auth-token"
+
+   # LLM Observability
+   LANGSMITH_API_KEY="your-langsmith-api-key"
+   LANGSMITH_TRACING="true"
    ```
 
 4. **Start the development environment**
@@ -419,12 +423,6 @@ flowchart TD
     Y --> Z[Sync Documentation to Wiki]
     Z --> AA[Close Linear Ticket]
 
-    style A fill:#e1f5fe
-    style AA fill:#c8e6c9
-    style Y fill:#ffcdd2
-    style I fill:#fff3e0
-    style L fill:#fff3e0
-    style U fill:#fff3e0
 ```
 
 #### Pipeline Stages

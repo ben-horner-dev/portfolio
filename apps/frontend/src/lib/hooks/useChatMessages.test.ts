@@ -1,21 +1,14 @@
 import { readStreamableValue } from "@ai-sdk/rsc";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  checkDailyTokenCount,
-  updateTokenCount,
-} from "@/lib/explore/agent/tokenCount";
 import { InterlocutorType } from "@/lib/explore/constants";
 import { useChatStore } from "@/lib/stores/chatStore";
 import { useChatMessages } from "./useChatMessages";
 
 vi.mock("@/lib/stores/chatStore");
-vi.mock("@/lib/explore/agent/tokenCount");
 vi.mock("@ai-sdk/rsc");
 
 const mockUseChatStore = vi.mocked(useChatStore);
-const mockCheckDailyTokenCount = vi.mocked(checkDailyTokenCount);
-const mockUpdateTokenCount = vi.mocked(updateTokenCount);
 const mockReadStreamableValue = vi.mocked(readStreamableValue);
 
 const mockMessages = [
@@ -55,27 +48,6 @@ describe("useChatMessages", () => {
     mockGetState.mockReturnValue({
       setScrollPosition: vi.fn(),
       batchUpdate: vi.fn(),
-    });
-    mockCheckDailyTokenCount.mockResolvedValue({
-      success: true,
-      user: {
-        id: "user-id",
-        name: null,
-        email: "test@example.com",
-        tokens: 0,
-        authId: "auth-id",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-    mockUpdateTokenCount.mockResolvedValue({
-      id: "user-id",
-      name: null,
-      email: "test@example.com",
-      tokens: 100,
-      authId: "auth-id",
-      createdAt: new Date(),
-      updatedAt: new Date(),
     });
     const mockAsyncIterable = {
       async *[Symbol.asyncIterator]() {},
@@ -179,7 +151,6 @@ describe("useChatMessages", () => {
       await result.current.sendMessage("Hello");
     });
 
-    expect(mockCheckDailyTokenCount).toHaveBeenCalledWith("test-chat-id");
     expect(mockAction).toHaveBeenCalledWith(
       "Hello",
       mockConfig,
@@ -245,24 +216,6 @@ describe("useChatMessages", () => {
     expect(mockStore.updateMessage).toHaveBeenCalled();
   });
 
-  it("should handle streaming response with only totalTokens", async () => {
-    const mockAsyncIterable = {
-      async *[Symbol.asyncIterator]() {
-        yield { totalTokens: 50 };
-      },
-    };
-
-    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
-
-    const { result } = renderHook(() => useChatMessages(mockAction));
-
-    await act(async () => {
-      await result.current.sendMessage("Hello");
-    });
-
-    expect(mockUpdateTokenCount).toHaveBeenCalled();
-  });
-
   it("should handle streaming response with graphMermaid", async () => {
     const mockSetGraphMermaid = vi.fn();
     mockUseChatStore.mockReturnValue({
@@ -311,28 +264,6 @@ describe("useChatMessages", () => {
     );
   });
 
-  it("should handle token limit error gracefully", async () => {
-    mockCheckDailyTokenCount.mockResolvedValue({
-      success: false,
-      error: "You have reached the token limit for today",
-    });
-
-    const { result } = renderHook(() => useChatMessages(mockAction));
-
-    await act(async () => {
-      await result.current.sendMessage("Hello");
-    });
-
-    const mockStore = mockUseChatStore.mock.results[0].value;
-    expect(mockStore.updateMessage).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        content: "You have reached the token limit for today",
-      }),
-    );
-    expect(mockAction).not.toHaveBeenCalled();
-  });
-
   it("should update scroll position when messagesContainerRef is provided", async () => {
     const mockScrollTop = 100;
     const mockContainer = {
@@ -352,49 +283,5 @@ describe("useChatMessages", () => {
     expect(mockGetState().setScrollPosition).toHaveBeenCalledWith(
       mockScrollTop,
     );
-  });
-
-  it("should skip token update for guest users", async () => {
-    mockUseChatStore.mockReturnValue({
-      messages: mockMessages,
-      setIsTyping: vi.fn(),
-      updateMessage: vi.fn(),
-      updateThoughts: vi.fn(),
-      chatId: "guest",
-      config: mockConfig,
-      addMessages: vi.fn(),
-      batchUpdate: vi.fn(),
-    });
-
-    mockCheckDailyTokenCount.mockResolvedValue({
-      success: true,
-      user: {
-        id: "00000000-0000-0000-0000-000000000000",
-        name: "Guest User",
-        email: "guest@example.com",
-        tokens: 0,
-        authId: "guest",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      isGuest: true,
-    });
-
-    const mockAsyncIterable = {
-      async *[Symbol.asyncIterator]() {
-        yield { totalTokens: 50 };
-      },
-    };
-
-    mockReadStreamableValue.mockReturnValue(mockAsyncIterable);
-
-    const { result } = renderHook(() => useChatMessages(mockAction));
-
-    await act(async () => {
-      await result.current.sendMessage("Hello");
-    });
-
-    expect(mockCheckDailyTokenCount).toHaveBeenCalledWith("guest");
-    expect(mockUpdateTokenCount).not.toHaveBeenCalled();
   });
 });

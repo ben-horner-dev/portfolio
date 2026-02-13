@@ -1,5 +1,3 @@
-"use server";
-
 import { count, eq } from "drizzle-orm";
 import { humanEvaluations } from "@/lib/db/schema";
 import type {
@@ -8,6 +6,7 @@ import type {
   ServerLessDatabase,
 } from "@/lib/db/types";
 import { dbOperation } from "@/lib/db/utils";
+import "server-only";
 
 export const setHumanEval = await dbOperation(
   async (

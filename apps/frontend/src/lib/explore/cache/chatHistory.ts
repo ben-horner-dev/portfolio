@@ -1,7 +1,7 @@
-"use server";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { InterlocutorType } from "@/lib/explore/constants";
+import "server-only";
 import { getCache } from "./cache";
 
 export const writeChatHistory = async (

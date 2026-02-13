@@ -1,5 +1,5 @@
 import { createStreamableValue } from "@ai-sdk/rsc";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   AgentGraphError,
@@ -20,6 +20,15 @@ vi.mock("@/lib/logger", () => ({
 
 vi.mock("next/src/server/web/spec-extension/unstable-cache", () => ({
   unstable_cache: vi.fn((fn) => fn),
+}));
+
+vi.mock("@/lib/identity/auth0", () => ({
+  getAuth0UserId: vi.fn(),
+}));
+
+vi.mock("@/lib/explore/agent/tokenCount", () => ({
+  checkDailyTokenCount: vi.fn(),
+  updateTokenCount: vi.fn(),
 }));
 
 vi.mock("@/lib/explore/maps", async () => {
@@ -68,6 +77,16 @@ vi.mock("@/lib/ContentConfig/getContentConfig", () => ({
   }),
 }));
 
+import {
+  checkDailyTokenCount,
+  updateTokenCount,
+} from "@/lib/explore/agent/tokenCount";
+import { getAuth0UserId } from "@/lib/identity/auth0";
+
+const mockGetAuth0UserId = vi.mocked(getAuth0UserId);
+const mockCheckDailyTokenCount = vi.mocked(checkDailyTokenCount);
+const mockUpdateTokenCount = vi.mocked(updateTokenCount);
+
 const mockLLM = () => "custom response";
 const mockFormatter = () => "formatted response";
 class MockGraphFactory {
@@ -81,9 +100,24 @@ class MockGraphFactory {
   }
 }
 
+const mockUser = {
+  id: "1",
+  name: null,
+  email: "test@example.com",
+  authId: "auth0|user123",
+  tokens: 5,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 class MockAgentOrchestrator {
   execute() {
-    return Promise.resolve("test orchestrator");
+    return Promise.resolve({
+      answer: "test answer",
+      graphMermaid: "graph",
+      courseLinks: [],
+      totalTokens: 42,
+    });
   }
 }
 
@@ -94,8 +128,114 @@ class MockAgentOrchestratorErrorThrowe {
 }
 
 describe("agent", () => {
+  beforeEach(() => {
+    mockGetAuth0UserId.mockResolvedValue("auth0|user123");
+    mockCheckDailyTokenCount.mockResolvedValue({
+      success: true,
+      user: mockUser,
+    });
+    mockUpdateTokenCount.mockResolvedValue(mockUser);
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("should reject unauthenticated non-guest users", async () => {
+    mockGetAuth0UserId.mockResolvedValue(undefined);
+
+    await agent(
+      "test_message",
+      {} as any,
+      [],
+      "not-guest",
+      undefined,
+      undefined,
+      undefined,
+      MockAgentOrchestrator as any,
+      MockGraphFactory as any,
+    );
+
+    const mockCreateStreamableValue = vi.mocked(createStreamableValue);
+    const streamInstance = mockCreateStreamableValue.mock.results[0].value;
+
+    expect(streamInstance.update.mock.calls.length).to.eq(1);
+    const updateCall = streamInstance.update.mock.calls[0][0];
+    expect(updateCall.error).instanceOf(AgentGraphError);
+    expect(updateCall.error.message).to.eq(
+      "Authentication required. Please log in to use the chat.",
+    );
+    expect(streamInstance.done.mock.calls.length).to.eq(1);
+  });
+
+  it("should allow guest users without auth", async () => {
+    mockGetAuth0UserId.mockResolvedValue(undefined);
+    mockCheckDailyTokenCount.mockResolvedValue({
+      success: true,
+      user: mockUser,
+      isGuest: true,
+    });
+
+    await agent(
+      "test_message",
+      {} as any,
+      [],
+      "guest",
+      undefined,
+      undefined,
+      undefined,
+      MockAgentOrchestrator as any,
+      MockGraphFactory as any,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(mockCheckDailyTokenCount).toHaveBeenCalledWith("guest");
+    expect(mockUpdateTokenCount).not.toHaveBeenCalled();
+  });
+
+  it("should reject when token limit is reached", async () => {
+    mockCheckDailyTokenCount.mockResolvedValue({
+      success: false,
+      error: "Token limit reached",
+    });
+
+    await agent(
+      "test_message",
+      {} as any,
+      [],
+      "test",
+      undefined,
+      undefined,
+      undefined,
+      MockAgentOrchestrator as any,
+      MockGraphFactory as any,
+    );
+
+    const mockCreateStreamableValue = vi.mocked(createStreamableValue);
+    const streamInstance = mockCreateStreamableValue.mock.results[0].value;
+
+    expect(streamInstance.update.mock.calls.length).to.eq(1);
+    const updateCall = streamInstance.update.mock.calls[0][0];
+    expect(updateCall.error).instanceOf(AgentGraphError);
+    expect(updateCall.error.message).to.eq("Token limit reached");
+    expect(streamInstance.done.mock.calls.length).to.eq(1);
+  });
+
+  it("should use auth id as chat id for authenticated users", async () => {
+    await agent(
+      "test_message",
+      {} as any,
+      [],
+      "client-supplied-id",
+      undefined,
+      undefined,
+      undefined,
+      MockAgentOrchestrator as any,
+      MockGraphFactory as any,
+    );
+
+    expect(mockCheckDailyTokenCount).toHaveBeenCalledWith("auth0|user123");
   });
 
   it("should create stream and execute agent with basic parameters", async () => {
@@ -121,8 +261,25 @@ describe("agent", () => {
     const streamInstance = mockCreateStreamableValue.mock.results[0].value;
 
     expect(streamInstance.update.mock.calls.length).to.eq(1);
-    expect(streamInstance.update.mock.calls[0][0]).to.eq("test orchestrator");
     expect(streamInstance.done.mock.calls.length).to.eq(1);
+  });
+
+  it("should update token count for authenticated users after execution", async () => {
+    await agent(
+      "test_message",
+      {} as any,
+      [],
+      "test",
+      undefined,
+      undefined,
+      undefined,
+      MockAgentOrchestrator as any,
+      MockGraphFactory as any,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(mockUpdateTokenCount).toHaveBeenCalledWith(mockUser, 42);
   });
 
   it("should create stream with placeholders and error", async () => {

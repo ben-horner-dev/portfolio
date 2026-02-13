@@ -18,6 +18,10 @@ import {
 import _ from "lodash";
 import { AgentGraphFactory } from "@/lib/explore/agent/graphFactory";
 import {
+  checkDailyTokenCount,
+  updateTokenCount,
+} from "@/lib/explore/agent/tokenCount";
+import {
   readCacheHistory,
   writeChatHistory,
 } from "@/lib/explore/cache/chatHistory";
@@ -55,7 +59,10 @@ import type {
   ToolStateBinding,
 } from "@/lib/explore/types";
 import { TracedClass } from "@/lib/explore/utils";
+import { getAuth0UserId } from "@/lib/identity/auth0";
 import { getLogger } from "@/lib/logger";
+
+const GUEST_CHAT_ID = "guest";
 
 const logger = getLogger();
 
@@ -70,9 +77,42 @@ export const agent = async (
   injectedAgentOrchestrator = AgentOrchestrator,
   injectedGraphFactory = AgentGraphFactory,
 ) => {
-  const graphFactory = new injectedGraphFactory(config, maps);
-  const traceId = getTraceId(chatId);
   const stream = createStreamableValue<AgentResponse>();
+
+  const authId = await getAuth0UserId();
+  const isGuest = !authId && chatId === GUEST_CHAT_ID;
+
+  if (!authId && !isGuest) {
+    stream.update({
+      answer: "",
+      graphMermaid: "",
+      error: new AgentGraphError(
+        "Authentication required. Please log in to use the chat.",
+      ),
+      courseLinks: [],
+      totalTokens: 0,
+    });
+    stream.done();
+    return stream.value;
+  }
+
+  const resolvedChatId: string = isGuest ? GUEST_CHAT_ID : (authId as string);
+
+  const tokenCheckResult = await checkDailyTokenCount(resolvedChatId);
+  if (!tokenCheckResult.success) {
+    stream.update({
+      answer: "",
+      graphMermaid: "",
+      error: new AgentGraphError(tokenCheckResult.error),
+      courseLinks: [],
+      totalTokens: 0,
+    });
+    stream.done();
+    return stream.value;
+  }
+
+  const graphFactory = new injectedGraphFactory(config, maps);
+  const traceId = getTraceId(resolvedChatId);
 
   const orchestrator = new injectedAgentOrchestrator(
     config,
@@ -90,9 +130,13 @@ export const agent = async (
     try {
       const response = await orchestrator.execute(
         message,
-        chatId,
+        resolvedChatId,
         formattedLastFourChats,
       );
+
+      if (!isGuest) {
+        await updateTokenCount(tokenCheckResult.user, response.totalTokens);
+      }
 
       stream.update(response);
       stream.done();
