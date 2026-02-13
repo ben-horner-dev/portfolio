@@ -54,6 +54,7 @@ const config: StorybookConfig = {
       ...config.resolve,
       alias: {
         ...config.resolve?.alias,
+        "@/public": path.resolve(__dirname, "../public"),
         "next/image": path.resolve(__dirname, "./mock-image.tsx"),
         "next/link": path.resolve(__dirname, "./mock-link.tsx"),
       },
