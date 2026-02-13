@@ -1,7 +1,7 @@
+import { eq } from "drizzle-orm";
 import { agentConfigs } from "@/lib/db/schema";
 import type { Database, ServerLessDatabase } from "@/lib/db/types";
 import { dbOperation } from "@/lib/db/utils";
-import { eq } from "drizzle-orm";
 import "server-only";
 
 const _configQueryResult = async (

@@ -284,5 +284,4 @@ describe("useChatMessages", () => {
       mockScrollTop,
     );
   });
-
 });

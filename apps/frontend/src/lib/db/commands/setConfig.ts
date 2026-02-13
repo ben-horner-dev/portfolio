@@ -1,5 +1,6 @@
 import "server-only";
 
+import { eq, sql } from "drizzle-orm";
 import { agentConfigs } from "@/lib/db/schema";
 import type {
   Database,
@@ -8,7 +9,6 @@ import type {
   ServerLessDatabase,
 } from "@/lib/db/types";
 import { dbOperation } from "@/lib/db/utils";
-import { eq, sql } from "drizzle-orm";
 
 export const setConfig = await dbOperation(
   async (

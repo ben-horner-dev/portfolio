@@ -77,11 +77,11 @@ vi.mock("@/lib/ContentConfig/getContentConfig", () => ({
   }),
 }));
 
-import { getAuth0UserId } from "@/lib/identity/auth0";
 import {
   checkDailyTokenCount,
   updateTokenCount,
 } from "@/lib/explore/agent/tokenCount";
+import { getAuth0UserId } from "@/lib/identity/auth0";
 
 const mockGetAuth0UserId = vi.mocked(getAuth0UserId);
 const mockCheckDailyTokenCount = vi.mocked(checkDailyTokenCount);
@@ -144,7 +144,7 @@ describe("agent", () => {
   it("should reject unauthenticated non-guest users", async () => {
     mockGetAuth0UserId.mockResolvedValue(undefined);
 
-    const result = await agent(
+    await agent(
       "test_message",
       {} as any,
       [],
